@@ -51,6 +51,7 @@ namespace Project284
         }
         #endregion
 
+        #region Entrance Menu
         public static MenuHandlerDelegate EntranceMenu()
         {
             UserActions userActions = new UserActions();
@@ -63,7 +64,7 @@ namespace Project284
             Console.WriteLine("3. Exit");
 
             Console.Write("Select a menu option: ");
-            int choice = Menus.GetValidInput(1, 3);
+            int choice = GetValidInput(1, 3);
 
             switch (choice)
             {
@@ -81,7 +82,9 @@ namespace Project284
                 return EntranceMenu;
             }
         }
+        #endregion
 
+        #region Main Menu
         public static MenuHandlerDelegate MainMenu()
         {
             UserActions userActions = new UserActions();
@@ -94,12 +97,12 @@ namespace Project284
             Console.WriteLine("5. Logout");
 
             Console.Write("Select a menu option: ");
-            int choice = Menus.GetValidInput(1, 5);
+            int choice = GetValidInput(1, 5);
 
             switch (choice)
             {
                 case 1:
-               // return RecommendationEngine.RecommendShows;
+               return userActions.RecommendShows;
                 case 2:
                 return ProfileMenu;
                 case 3:
@@ -112,7 +115,9 @@ namespace Project284
                 return null;
             }
         }
+        #endregion
 
+        #region Profile Menu
         public static MenuHandlerDelegate ProfileMenu()
         {
             UserActions userActions = new UserActions();
@@ -124,7 +129,7 @@ namespace Project284
             Console.WriteLine("4. Back to Main Menu");
 
             Console.Write("Select a menu option: ");
-            int choice = Menus.GetValidInput(1, 4);
+            int choice = GetValidInput(1, 4);
 
             switch (choice)
             {
@@ -140,5 +145,6 @@ namespace Project284
                 return null;
             }
         }
+        #endregion
     }
 }
