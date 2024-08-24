@@ -10,15 +10,6 @@ namespace Watt_2_Watch
 {
     public class Database : IDataBase
     {
-        public List<string> GetValidGenres()
-        {
-            return Records.SelectMany(record => record.Genres)
-                          .Select(genre => genre.Trim())
-                          .Distinct()
-                          .Where(g => !string.IsNullOrWhiteSpace(g))
-                          .ToList();
-        }
-
         #region Constructor
         /// <summary>
         /// Turns the Movies Database text file into accessible records.
@@ -108,62 +99,216 @@ namespace Watt_2_Watch
         public List<DatabaseRecord> Records { get; private set; } = new List<DatabaseRecord>();
         #endregion
 
-        #region Private Methods
+        #region Private method
+        /// <summary>
+        /// Filters the collection of records to include only those with specified title types.
+        /// </summary>
+        /// <returns>An IEnumerable of DatabaseRecord where each record's TitleType is one of the following: "tvSeries", "movie", "short", "tvMiniSeries", or "tvSpecial".</returns>
         private IEnumerable<DatabaseRecord> FilterByType(IEnumerable<DatabaseRecord> records)
         {
-            return records.Where(rec => rec.TitleType == "tvSeries" || rec.TitleType == "movie" || rec.TitleType == "short" || rec.TitleType == "tvMiniSeries" || rec.TitleType == "tvSpecial");
+            var filteredRecords = new List<DatabaseRecord>();
+
+            foreach (var rec in records)
+            {
+
+                if (rec.TitleType == "tvSeries" || rec.TitleType == "movie" || rec.TitleType == "short" || rec.TitleType == "tvMiniSeries" || rec.TitleType == "tvSpecial")
+                {
+                    filteredRecords.Add(rec);
+                }
+            }
+            return filteredRecords;
         }
         #endregion
 
         #region Interface Methods
         public List<DatabaseRecord> FilterByYearRange(int startYear, int endYear)
         {
-            return FilterByType(Records).Where(rec => rec.StartYear >= startYear && rec.StartYear <= endYear).ToList();
+            IEnumerable<DatabaseRecord> filteredByType = FilterByType(Records);
+
+            List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
+
+            foreach (var rec in filteredByType)
+            {
+                if (rec.StartYear >= startYear && rec.StartYear <= endYear)
+                {
+                    filteredRecords.Add(rec);
+                }
+            }
+            return filteredRecords;
         }
 
         public List<DatabaseRecord> FilterByYearRange(List<DatabaseRecord> recordList, int startYear, int endYear)
         {
-            return FilterByType(recordList).Where(rec => rec.StartYear >= startYear && rec.StartYear <= endYear).ToList();
+            IEnumerable<DatabaseRecord> filteredByType = FilterByType(recordList);
+
+            List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
+
+            foreach (var rec in filteredByType)
+            {
+                if (rec.StartYear >= startYear && rec.StartYear <= endYear)
+                {
+                    filteredRecords.Add(rec);
+                }
+            }
+            return filteredRecords;
         }
 
         public List<DatabaseRecord> FilterByGenre(List<string> genres)
         {
-            return FilterByType(Records).Where(rec => rec.Genres.Any(genre => genres.Contains(genre, StringComparer.OrdinalIgnoreCase))).ToList();
+            IEnumerable<DatabaseRecord> filteredByType = FilterByType(Records);
+
+            List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
+
+            foreach (var rec in filteredByType)
+            {
+                foreach (var genre in rec.Genres)
+                {
+                    if (genres.Contains(genre, StringComparer.OrdinalIgnoreCase))
+                    {
+                        filteredRecords.Add(rec);
+                        break;
+                    }
+                }
+            }
+            return filteredRecords;
         }
 
         public List<DatabaseRecord> FilterByGenre(List<DatabaseRecord> recordList, List<string> genres)
         {
-            return FilterByType(recordList).Where(rec => rec.Genres.Any(genre => genres.Contains(genre, StringComparer.OrdinalIgnoreCase))).ToList();
+            IEnumerable<DatabaseRecord> filteredByType = FilterByType(recordList);
+
+            List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
+
+            foreach (var rec in filteredByType)
+            {
+                foreach (var genre in rec.Genres)
+                {
+                    if (genres.Contains(genre, StringComparer.OrdinalIgnoreCase))
+                    {
+                        filteredRecords.Add(rec);
+                        break;
+                    }
+                }
+            }
+            return filteredRecords;
         }
 
         public List<DatabaseRecord> FilterByTitle(string title)
         {
-            return FilterByType(Records).Where(rec => rec.PrimaryTitle.Contains(title, StringComparison.OrdinalIgnoreCase) || rec.OriginalTitle.Contains(title, StringComparison.OrdinalIgnoreCase)).ToList();
+            IEnumerable<DatabaseRecord> filteredByType = FilterByType(Records);
+
+            List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
+
+            foreach (var rec in filteredByType)
+            {
+                if (rec.PrimaryTitle.Contains(title, StringComparison.OrdinalIgnoreCase) || rec.OriginalTitle.Contains(title, StringComparison.OrdinalIgnoreCase))
+                {
+                    filteredRecords.Add(rec);
+                }
+            }
+            return filteredRecords;
         }
 
         public List<DatabaseRecord> FilterByTitle(List<DatabaseRecord> recordList, string title)
         {
-            return FilterByType(recordList).Where(rec => rec.PrimaryTitle.Contains(title, StringComparison.OrdinalIgnoreCase) || rec.OriginalTitle.Contains(title, StringComparison.OrdinalIgnoreCase)).ToList();
+            IEnumerable<DatabaseRecord> filteredByType = FilterByType(recordList);
+
+            List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
+
+            foreach (var rec in filteredByType)
+            {
+                if (rec.PrimaryTitle.Contains(title, StringComparison.OrdinalIgnoreCase) || rec.OriginalTitle.Contains(title, StringComparison.OrdinalIgnoreCase))
+                {
+                    filteredRecords.Add(rec);
+                }
+            }
+            return filteredRecords;
         }
 
         public List<DatabaseRecord> FilterByDuration(int minDuration, int maxDuration)
         {
-            return FilterByType(Records).Where(rec => rec.RuntimeMinutes >= minDuration && rec.RuntimeMinutes <= maxDuration).ToList();
+            IEnumerable<DatabaseRecord> filteredByType = FilterByType(Records);
+
+            List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
+
+            foreach (var rec in filteredByType)
+            {
+                if (rec.RuntimeMinutes >= minDuration && rec.RuntimeMinutes <= maxDuration)
+                {
+                    filteredRecords.Add(rec);
+                }
+            }
+            return filteredRecords;
         }
 
         public List<DatabaseRecord> FilterByDuration(List<DatabaseRecord> recordList, int minDuration, int maxDuration)
         {
-            return FilterByType(recordList).Where(rec => rec.RuntimeMinutes >= minDuration && rec.RuntimeMinutes <= maxDuration).ToList();
+            IEnumerable<DatabaseRecord> filteredByType = FilterByType(recordList);
+
+            List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
+
+            foreach (var rec in filteredByType)
+            {
+                if (rec.RuntimeMinutes >= minDuration && rec.RuntimeMinutes <= maxDuration)
+                {
+                    filteredRecords.Add(rec);
+                }
+            }
+            return filteredRecords;
         }
 
         public List<DatabaseRecord> FilterByType(string showType)
         {
-            return Records.Where(rec => rec.TitleType == showType).ToList();
+            List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
+
+            foreach (var rec in Records)
+            {
+                if (rec.TitleType == showType)
+                {
+                    filteredRecords.Add(rec);
+                }
+            }
+            return filteredRecords;
         }
 
         public List<DatabaseRecord> FilterByType(List<DatabaseRecord> recordList, string showType)
         {
-            return recordList.Where(rec => rec.TitleType == showType).ToList();
+            List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
+
+            foreach (var rec in recordList)
+            {
+                if (rec.TitleType == showType)
+                {
+                    filteredRecords.Add(rec);
+                }
+            }
+            return filteredRecords;
+        }
+        #endregion
+
+        #region Validate genres
+        /// <summary>
+        /// Retrieves a list of unique genres from the database records, removes any spaces, and validates them against the database.
+        /// </summary>
+        /// <returns>A list of valid, distinct genres.</returns>
+        public List<string> GetValidGenres()
+        {
+            List<string> validGenres = new List<string>();
+
+            foreach (var record in Records)
+            {
+                foreach (string genre in record.Genres)
+                {
+                    // Removes spaces
+                    string trimmedGenre = genre.Trim();
+
+                    if (trimmedGenre.Length > 0 && !validGenres.Contains(trimmedGenre))
+                    {
+                        validGenres.Add(trimmedGenre);
+                    }
+                }
+            }
+            return validGenres;
         }
         #endregion
     }
