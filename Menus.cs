@@ -90,6 +90,7 @@ namespace Project284
             UserActions userActions = new UserActions();
             Console.Clear();
             Console.WriteLine("Main Menu:");
+            Console.WriteLine("=============");
             Console.WriteLine("1. Recommend Me Something!");
             Console.WriteLine("2. View Profile");
             Console.WriteLine("3. Search for a Show");
@@ -123,6 +124,7 @@ namespace Project284
             UserActions userActions = new UserActions();
             Console.Clear();
             Console.WriteLine("Profile Menu:");
+            Console.WriteLine("===============");
             Console.WriteLine("1. Display Details");
             Console.WriteLine("2. View Watch History");
             Console.WriteLine("3. Change Genre Preferences");
