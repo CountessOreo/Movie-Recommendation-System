@@ -11,6 +11,13 @@ namespace Project284
     {
         public delegate MenuHandlerDelegate MenuHandlerDelegate();
 
+        /// <summary>
+        /// Prompts the user to enter a menu selection and returns the selection if it is within the specified range.
+        /// Continuously prompts the user until a valid selection is entered.
+        /// </summary>
+        /// <param name="min">The minimum valid choice.</param>
+        /// <param name="max">The maximum valid choice.</param>
+        /// <returns>The user's valid selection as an integer.</returns>
         public static int GetValidInput(int min, int max)
         {
             int choice = 0;
@@ -27,7 +34,7 @@ namespace Project284
                         error = true;
                     break;
                 }
-                catch (Exception)
+                catch
                 {
                     error = true;
                 }
