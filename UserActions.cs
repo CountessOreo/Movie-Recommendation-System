@@ -151,31 +151,13 @@ namespace Project284
         }
         public Menus.MenuHandlerDelegate RateShow()
         {
-            // Debug print to check LoggedInUser before proceeding
-            if (LoggedInUser == null)
+            try
             {
-                Console.WriteLine("Error: No user is currently logged in. Press any key to return to the main menu...");
-                Console.ReadKey();
-                return Menus.MainMenu;
-            }
-            else
-            {
-                Console.WriteLine($"User logged in: {LoggedInUser.Username}");
-            }
-
-            bool rateAnother;
-            do
-            {
-                rateAnother = false;  // Default to not rating another show
-
                 Console.Clear();
-                Console.WriteLine("Rate a Show");
-                Console.WriteLine("Enter the title of the show you want to rate:");
+                Console.WriteLine("Rate a Show\nEnter the title of the show you want to rate:");
                 string title = Console.ReadLine();
 
-                // Fetch similar shows based on the entered title
                 var similarShows = db.FilterByTitle(title);
-
                 if (similarShows.Count == 0)
                 {
                     Console.WriteLine("No shows found with that title. Press any key to go back...");
@@ -183,7 +165,6 @@ namespace Project284
                 }
                 else
                 {
-                    // Display similar shows and ask the user to select one
                     Console.WriteLine("Select the show you want to rate:");
                     for (int i = 0; i < similarShows.Count; i++)
                     {
@@ -191,37 +172,17 @@ namespace Project284
                         Console.WriteLine($"{i + 1}. {show.PrimaryTitle} ({show.StartYear}) - Genres: {string.Join(", ", show.Genres)}");
                     }
 
-                    Console.WriteLine("Enter the number of the show you want to rate:");
                     if (int.TryParse(Console.ReadLine(), out int selectedShowIndex) && selectedShowIndex > 0 && selectedShowIndex <= similarShows.Count)
                     {
                         var selectedShow = similarShows[selectedShowIndex - 1];
-
-                        bool validRating = false;
-                        int rating = 0;
+                        int rating;
                         do
                         {
-                            Console.WriteLine($"You selected: {selectedShow.PrimaryTitle} ({selectedShow.StartYear}) - Genres: {string.Join(", ", selectedShow.Genres)}");
-                            Console.WriteLine("Rate this show (1-5 stars):");
-                            if (int.TryParse(Console.ReadLine(), out rating) && rating >= 1 && rating <= 5)
-                            {
-                                validRating = true;
+                            Console.WriteLine($"You selected: {selectedShow.PrimaryTitle} ({selectedShow.StartYear}) - Genres: {string.Join(", ", selectedShow.Genres)}\nRate this show (1-5 stars):");
+                        } while (!int.TryParse(Console.ReadLine(), out rating) || rating < 1 || rating > 5);
 
-                                // Update genre preferences based on rating
-                                foreach (var genre in selectedShow.Genres)
-                                {
-                                    Console.WriteLine($"Adding genre preference for {genre} with rating {rating}");  // Debug print
-                                    LoggedInUser.AddGenrePreference(genre, rating);
-                                }
-
-                                LoggedInUser.WatchHistory.Add(selectedShow);
-                                Console.WriteLine("Rating recorded. Press any key to continue...");
-                                Console.ReadLine();
-                            }
-                            else
-                            {
-                                Console.WriteLine("Invalid rating. Please enter a number between 1 and 5.");
-                            }
-                        } while (!validRating);
+                        Console.WriteLine("Rating recorded. Press any key to continue...");
+                        Console.ReadLine();
                     }
                     else
                     {
@@ -229,15 +190,15 @@ namespace Project284
                         Console.ReadKey();
                     }
                 }
-
-                Console.WriteLine("Would you like to rate another show? (y/n):");
-                string continueRating = Console.ReadLine().Trim().ToLower();
-                rateAnother = continueRating == "y";
-
-            } while (rateAnother);
+            }
+            catch (Exception ex)
+            {
+              Console.WriteLine($"An error occurred while rating the show: {ex.Message}");
+            }
 
             return Menus.MainMenu;
         }
+
 
 
         public Menus.MenuHandlerDelegate DisplayDetails()
