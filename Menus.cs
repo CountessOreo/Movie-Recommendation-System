@@ -9,8 +9,11 @@ namespace Project284
 {   
     internal class Menus
     {
+        #region Delegate definition
         public delegate MenuHandlerDelegate MenuHandlerDelegate();
+        #endregion
 
+        #region User menu selection validation
         /// <summary>
         /// Prompts the user to enter a menu selection and returns the selection if it is within the specified range.
         /// Continuously prompts the user until a valid selection is entered.
@@ -46,6 +49,7 @@ namespace Project284
             }
             return choice;
         }
+        #endregion
 
         public static MenuHandlerDelegate EntranceMenu()
         {
