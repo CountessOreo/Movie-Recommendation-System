@@ -10,9 +10,11 @@ namespace Project284
     {
         #region Constructor
         public UserActions() {}
-
         #endregion
 
+        #region Variables
+        public Database MyImdBDatabase = new Database(Properties.Resources.MoviesDatabase);
+        #endregion
 
         #region Properties
         public List<User> Users { get; set; } = new List<User>();
@@ -20,7 +22,6 @@ namespace Project284
         public Database db { get; set; } = new Database(Properties.Resources.MoviesDatabase);
 
         // We need an instance of the User class
-
         #endregion
 
         #region Public delegate functions

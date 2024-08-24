@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Project284;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Watt_2_Watch
 {
-    public class Database
+    public class Database : IDataBase
     {
         #region Constructor
         /// <summary>
@@ -97,12 +98,14 @@ namespace Watt_2_Watch
         public List<DatabaseRecord> Records { get; private set; } = new List<DatabaseRecord>();
         #endregion
 
-        #region Methods
+        #region Private Methods
         private IEnumerable<DatabaseRecord> FilterByType(IEnumerable<DatabaseRecord> records)
         {
             return records.Where(rec => rec.TitleType == "tvSeries" || rec.TitleType == "movie" || rec.TitleType == "short" || rec.TitleType == "tvMiniSeries" || rec.TitleType == "tvSpecial");
         }
+        #endregion
 
+        #region Interface Methods
         public List<DatabaseRecord> FilterByYearRange(int startYear, int endYear)
         {
             return FilterByType(Records).Where(rec => rec.StartYear >= startYear && rec.StartYear <= endYear).ToList();

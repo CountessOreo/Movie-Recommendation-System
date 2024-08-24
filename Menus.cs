@@ -13,13 +13,30 @@ namespace Project284
 
         public static int GetValidInput(int min, int max)
         {
-            int choice;
+            int choice = 0;
+            bool error;
 
-            while (!int.TryParse(Console.ReadLine(), out choice) || choice < min || choice > max)
+            while (true)
             {
-                Console.WriteLine($"Please enter a valid option ({min}-{max}):");
-            }
+                string Value = Console.ReadLine();
 
+                try
+                {
+                    choice = Convert.ToInt32(Value);
+                    if ((choice < min) || (choice > max))
+                        error = true;
+                    break;
+                }
+                catch (Exception)
+                {
+                    error = true;
+                }
+
+                if (!error)
+                    break;
+                else
+                    Console.WriteLine($"Please enter a valid option ({min}-{max}):");
+            }
             return choice;
         }
 
@@ -50,7 +67,7 @@ namespace Project284
                     return null;
                 };
                 default:
-                return null;
+                return EntranceMenu;
             }
         }
 
