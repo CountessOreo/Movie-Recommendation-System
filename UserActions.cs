@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics;
+using System.Text.RegularExpressions;
 using Watt_2_Watch;
 using static Watt_2_Watch.Database;
 
@@ -251,32 +252,64 @@ namespace Project284
         #region Recommend method has isssues
         public Menus.MenuHandlerDelegate RecommendShows()
         {
-            //var genreRankings = (Dictionary<string, int>)user["PreferredGenres"];
 
+            //Orders the list in acceding order
+            var sortedGenres = LoggedInUser.PreferredGenres.OrderBy(gr => gr.Value).Select(gr => gr.Key).ToList();
+            //Reverses order of list to display the most ranked genre first
+            sortedGenres.Reverse();
 
-            ////Orders the list in acceding order
-            //var sortedGenres = genreRankings.OrderBy(gr => gr.Value).Select(gr => gr.Key).ToList();
-            ////Reverses order of list to display the most ranked genre first
-            //sortedGenres.Reverse();
+            Thread thr = new Thread(() => PrintResults(sortedGenres));
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            thr.Start();
 
-            //Random random = new Random();
+            Console.Clear();
+            Thread.Sleep(500);
 
-            //foreach (var genre in sortedGenres)
-            //{
-            //    List<DatabaseRecord> Shows = db.FilterByGenre(new List<string> { genre });
-            //    //Shuffles the Shows list and takes the first 10
-            //    var randomShows = Shows.OrderBy(x => random.Next()).Take(10).ToList();
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("System is processing your request...{0} seconds", Math.Round(sw.Elapsed.TotalSeconds));
+                Thread.Sleep(1000);
+            }
+            while (thr.IsAlive);
 
-            //    Console.WriteLine($"Shows found for {genre}:\r\n");
-            //    foreach (DatabaseRecord rec in randomShows)
-            //    {
-            //        Console.WriteLine($"Title: {rec.OriginalTitle}.");
-            //    }
-            //    Console.WriteLine();
-            //}
+            thr.Join();
+            sw.Stop();
+
+            Console.WriteLine("Press any key to return...");
+
             Console.ReadKey();
             return Menus.MainMenu;
         }
+
+        #region Recommended Show Thread
+
+        public void PrintResults(List<string> sortedGenres)
+        {
+            Thread.Sleep(2000);
+
+            Console.Clear();
+
+            Random random = new Random();
+
+            foreach (var genre in sortedGenres)
+            {
+                List<DatabaseRecord> Shows = db.FilterByGenre(new List<string> { genre });
+                //Shuffles the Shows list and takes the first 10
+                var randomShows = Shows.OrderBy(x => random.Next()).Take(10).ToList();
+
+                Console.WriteLine($"Shows found for {genre}:\r\n");
+                foreach (DatabaseRecord rec in randomShows)
+                {
+                    Console.WriteLine($"Title: {rec.OriginalTitle}. Genres - {string.Join(", ", rec.Genres)}");
+                }
+                Console.WriteLine();
+            }
+        }
+
+        #endregion
+
         #endregion 
 
         #endregion
