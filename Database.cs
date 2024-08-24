@@ -10,24 +10,20 @@ namespace Watt_2_Watch
 {
     public class Database : IDataBase
     {
+        public List<string> GetValidGenres()
+        {
+            return Records.SelectMany(record => record.Genres)
+                          .Select(genre => genre.Trim())
+                          .Distinct()
+                          .Where(g => !string.IsNullOrWhiteSpace(g))
+                          .ToList();
+        }
+
         #region Constructor
         /// <summary>
         /// Turns the Movies Database text file into accessible records.
         /// </summary>
         /// <param name="DatabaseFile"></param>
-        /// 
-
-        public List<string> GetValidGenres()
-        {
-            return Records.SelectMany(record => record.Genres)
-                          .Select(genre => genre.Trim()) 
-                          .Distinct()
-                          .Where(g => !string.IsNullOrWhiteSpace(g)) 
-                          .ToList();
-        }
-
-
-
         public Database(string DatabaseFile)
         {
             string[] lines = DatabaseFile.Split('\n');
@@ -35,22 +31,33 @@ namespace Watt_2_Watch
 
             foreach (string line in lines)
             {
-                if (string.IsNullOrEmpty(line))
+                if (line == null || line == "")
                     continue;
 
                 if (!firstLine)
                 {
                     string[] fields = line.Split('\t');
-                    bool isAdult = fields.Length > 4 && fields[4] == "1";
+                    bool isAdult = false;
 
-                    // Checks to see if there is data for the field.
-                    int.TryParse(fields.Length > 5 && fields[5] != "\\N" ? fields[5] : "0", out int startYear);
-                    int.TryParse(fields.Length > 6 && fields[6] != "\\N" ? fields[6] : "0", out int endYear);
-                    int.TryParse(fields.Length > 7 && fields[7] != "\\N" ? fields[7] : "0", out int runtimeMinutes);
+                    // Checks if fields exist and sets unknown values to zero
+                    if (fields.Length > 4 && fields[4] == "1")
+                        isAdult = true;
+                    if (fields.Length > 5 && fields[5] == "\\N")
+                        fields[5] = "0";
+                    if (fields.Length > 6 && fields[6] == "\\N")
+                        fields[6] = "0";
+                    if (fields.Length > 7 && fields[7] == "\\N")
+                        fields[7] = "0";
 
-                    if (fields.Length > 8)
+
+                    try
                     {
-                        DatabaseRecord Record = new DatabaseRecord()
+                        // Try converting the fields into integers
+                        int startYear = Convert.ToInt32(fields[5]);
+                        int endYear = Convert.ToInt32(fields[6]);
+                        int runtimeMinutes = Convert.ToInt32(fields[7]);
+
+                        DatabaseRecord record = new DatabaseRecord()
                         {
                             ShowId = fields[0],
                             TitleType = fields[1],
@@ -61,10 +68,13 @@ namespace Watt_2_Watch
                             EndYear = endYear,
                             RuntimeMinutes = runtimeMinutes,
                             Genres = fields[8].Split(',').ToList(),
-
                         };
 
-                        Records.Add(Record);
+                        Records.Add(record);
+                    }
+                    catch
+                    {
+                        continue;
                     }
                 }
                 else
