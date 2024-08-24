@@ -88,6 +88,7 @@ namespace Project284
                 {
                     LoggedInUser = user;
                     Console.WriteLine("Login successful! Press any key to continue...");
+                    Console.WriteLine($"LoggedInUser set to: {LoggedInUser.Username}");
                     Console.ReadKey();
                     return Menus.MainMenu;
                 }
@@ -97,6 +98,7 @@ namespace Project284
             Console.ReadKey();
             return Menus.EntranceMenu;
         }
+
         public Menus.MenuHandlerDelegate SearchShows()
         {
             Console.Clear();
@@ -149,9 +151,23 @@ namespace Project284
         }
         public Menus.MenuHandlerDelegate RateShow()
         {
-            bool rateAnother = true;
+            // Debug print to check LoggedInUser before proceeding
+            if (LoggedInUser == null)
+            {
+                Console.WriteLine("Error: No user is currently logged in. Press any key to return to the main menu...");
+                Console.ReadKey();
+                return Menus.MainMenu;
+            }
+            else
+            {
+                Console.WriteLine($"User logged in: {LoggedInUser.Username}");
+            }
+
+            bool rateAnother;
             do
             {
+                rateAnother = false;  // Default to not rating another show
+
                 Console.Clear();
                 Console.WriteLine("Rate a Show");
                 Console.WriteLine("Enter the title of the show you want to rate:");
@@ -180,58 +196,50 @@ namespace Project284
                     {
                         var selectedShow = similarShows[selectedShowIndex - 1];
 
-                        bool invalidRating = true;
+                        bool validRating = false;
+                        int rating = 0;
                         do
                         {
                             Console.WriteLine($"You selected: {selectedShow.PrimaryTitle} ({selectedShow.StartYear}) - Genres: {string.Join(", ", selectedShow.Genres)}");
-                            Console.WriteLine("Did you like or dislike this show?");
-                            Console.WriteLine("1. Like\n2.Dislike");
-                            Console.WriteLine("Select on option");
-                            int choice = int.Parse(Console.ReadLine());
-                            int rating;
-                            switch (choice)
+                            Console.WriteLine("Rate this show (1-5 stars):");
+                            if (int.TryParse(Console.ReadLine(), out rating) && rating >= 1 && rating <= 5)
                             {
-                                case 1:
-                                    rating = 1;
-                                    foreach (var genre in selectedShow.Genres)
-                                    {
-                                        LoggedInUser.AddGenrePreference(genre, rating);
-                                    }
+                                validRating = true;
 
-                                    LoggedInUser.WatchHistory.Add(selectedShow);
-                                    Console.WriteLine("Rating recorded. Press any key to go back...");
-                                    Console.ReadLine();
-                                    invalidRating = false;
-                                break;
-                                case 2:
-                                    rating = -1;
-                                    foreach (var genre in selectedShow.Genres)
-                                    {
-                                        LoggedInUser.AddGenrePreference(genre, rating);
-                                    }
+                                // Update genre preferences based on rating
+                                foreach (var genre in selectedShow.Genres)
+                                {
+                                    Console.WriteLine($"Adding genre preference for {genre} with rating {rating}");  // Debug print
+                                    LoggedInUser.AddGenrePreference(genre, rating);
+                                }
 
-                                    LoggedInUser.WatchHistory.Add(selectedShow);
-                                    Console.WriteLine("Rating recorded. Press any key to go back...");
-                                    Console.ReadLine();
-                                    invalidRating = false;
-                                break;
-                                default:
-                                    Console.WriteLine("Invalid rating. Please enter a 1 or 2.");
-                                break;
+                                LoggedInUser.WatchHistory.Add(selectedShow);
+                                Console.WriteLine("Rating recorded. Press any key to continue...");
+                                Console.ReadLine();
                             }
-
-                        } while (invalidRating);
+                            else
+                            {
+                                Console.WriteLine("Invalid rating. Please enter a number between 1 and 5.");
+                            }
+                        } while (!validRating);
                     }
                     else
                     {
                         Console.WriteLine("Invalid selection. Press any key to go back...");
+                        Console.ReadKey();
                     }
                 }
-                Console.ReadKey();
+
+                Console.WriteLine("Would you like to rate another show? (y/n):");
+                string continueRating = Console.ReadLine().Trim().ToLower();
+                rateAnother = continueRating == "y";
 
             } while (rateAnother);
+
             return Menus.MainMenu;
         }
+
+
         public Menus.MenuHandlerDelegate DisplayDetails()
         {
             Console.Clear();
