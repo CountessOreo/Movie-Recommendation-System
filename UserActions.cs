@@ -14,6 +14,7 @@ namespace Project284
         #endregion
 
         #region Variables
+        // Instantiate the database
         public Database MyImdBDatabase = new Database(Properties.Resources.MoviesDatabase);
         #endregion
 
@@ -30,6 +31,7 @@ namespace Project284
         {
             Console.Clear();
             Console.WriteLine("Sign Up");
+            Console.WriteLine("==========");
 
             string username = SignupGetValidUsername();
             string password = SignupGetValidPassword();

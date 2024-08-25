@@ -288,7 +288,7 @@ namespace Watt_2_Watch
 
         #region Validate genres
         /// <summary>
-        /// Retrieves a list of unique genres from the database records, removes any spaces, and validates them against the database.
+        /// Retrieves a list of all unique genres in the database records.
         /// </summary>
         /// <returns>A list of valid, distinct genres.</returns>
         public List<string> GetValidGenres()
