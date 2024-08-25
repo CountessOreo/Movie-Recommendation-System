@@ -143,35 +143,6 @@ namespace Project284
 
         public Menus.MenuHandlerDelegate SearchShows(List<DatabaseRecord> shows = null)
         {
-            /*Console.Clear();
-            Console.WriteLine("Search for Shows");
-            Console.WriteLine("1. By Genre");
-            Console.WriteLine("2. By Title");
-
-            string option = Console.ReadLine();
-            List<Database.DatabaseRecord> results = new List<Database.DatabaseRecord>();
-
-            switch (option)
-            {
-                case "1":
-                Console.WriteLine("Enter Genre:");
-                string genre = Console.ReadLine();
-                results = db.FilterByGenre(new List<string> { genre });
-                break;
-                case "2":
-                Console.WriteLine("Enter Title:");
-                string title = Console.ReadLine();
-                results = db.FilterByTitle(title);
-                break;
-                default:
-                Console.WriteLine("Invalid option.");
-                Console.ReadLine();
-                return SearchShows;
-            }
-
-            DisplaySearchResults(results);
-            Console.ReadLine();*/
-
             int menuCount = 1, minDuration, maxDuration, startYear, endYear;
             string genresInput, title, type;
             bool looping = true;
