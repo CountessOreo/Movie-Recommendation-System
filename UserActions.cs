@@ -13,11 +13,6 @@ namespace Project284
         public UserActions() {}
         #endregion
 
-        #region Variables
-        // Instantiate the database
-        public Database MyImdBDatabase = new Database(Properties.Resources.MoviesDatabase);
-        #endregion
-
         #region Properties
         public List<User> Users { get; set; } = new List<User>();
         public User LoggedInUser { get; set; } = null;
