@@ -6,10 +6,16 @@ using System.Threading.Tasks;
 using Watt_2_Watch;
 
 namespace Project284
-{   
+{
     internal class Menus
     {
+        #region Shared UserActions instance
+        // Shared UserActions instance from Program.cs
+        static UserActions userActions = Program.userActions;
+        #endregion
+
         #region Delegate definition
+        // Delegate definition for handling menu navigation
         public delegate MenuHandlerDelegate MenuHandlerDelegate();
         #endregion
 
@@ -24,7 +30,7 @@ namespace Project284
         public static int GetValidInput(int min, int max)
         {
             int choice = 0;
-            bool error;
+            bool error = false;
 
             while (true)
             {
@@ -33,7 +39,7 @@ namespace Project284
                 try
                 {
                     choice = Convert.ToInt32(Value);
-                    if ((choice < min) || (choice > max))
+                    if (choice < min || choice > max)
                         error = true;
                     break;
                 }
@@ -42,20 +48,20 @@ namespace Project284
                     error = true;
                 }
 
-                if (!error)
-                    break;
-                else
-                    Console.WriteLine($"Please enter a valid option ({min}-{max}):");
+                if (!error) break;
+                else Console.WriteLine($"Please enter a valid option ({min}-{max}):");
             }
             return choice;
         }
         #endregion
 
         #region Entrance Menu
+        /// <summary>
+        /// Displays the entrance menu where users can log in, sign up, or exit.
+        /// </summary>
+        /// <returns>Next menu delegate to execute.</returns>
         public static MenuHandlerDelegate EntranceMenu()
         {
-            UserActions userActions = new UserActions();
-
             Console.Clear();
             Console.WriteLine("Welcome to Watt 2 Watch!");
             Console.WriteLine("==========================\n");
@@ -69,25 +75,26 @@ namespace Project284
             switch (choice)
             {
                 case 1:
-                return userActions.Login;
+                    return userActions.Login;
                 case 2:
-                return userActions.SignUp;
+                    return userActions.SignUp;
                 case 3:
-                {
                     Console.WriteLine("Goodbye!");
                     Console.ReadKey();
                     return null;
-                };
                 default:
-                return EntranceMenu;
+                    return EntranceMenu;
             }
         }
         #endregion
 
         #region Main Menu
+        /// <summary>
+        /// Displays the main menu where users can choose to get recommendations, view profile, search for shows, rate shows, or log out.
+        /// </summary>
+        /// <returns>Next menu delegate to execute.</returns>
         public static MenuHandlerDelegate MainMenu()
         {
-            UserActions userActions = new UserActions();
             Console.Clear();
             Console.WriteLine("Main Menu:");
             Console.WriteLine("=============");
@@ -103,25 +110,29 @@ namespace Project284
             switch (choice)
             {
                 case 1:
-               return userActions.RecommendShows;
+                    return userActions.RecommendShows;
                 case 2:
-                return ProfileMenu;
+                    return ProfileMenu;
                 case 3:
-                return userActions.SearchShows();
+                    return userActions.SearchShows;
                 case 4:
-                return userActions.RateShow;
+                    return userActions.RateShow;
                 case 5:
-                return EntranceMenu;
+                    userActions.LoggedInUser = null; // Logout the user
+                    return EntranceMenu;
                 default:
-                return null;
+                    return null;
             }
         }
         #endregion
 
         #region Profile Menu
+        /// <summary>
+        /// Displays the profile menu where users can view details, watch history, change genre preferences, or return to the main menu.
+        /// </summary>
+        /// <returns>Next menu delegate to execute.</returns>
         public static MenuHandlerDelegate ProfileMenu()
         {
-            UserActions userActions = new UserActions();
             Console.Clear();
             Console.WriteLine("Profile Menu:");
             Console.WriteLine("===============");
@@ -136,15 +147,15 @@ namespace Project284
             switch (choice)
             {
                 case 1:
-                return userActions.DisplayDetails;
+                    return userActions.DisplayDetails;
                 case 2:
-                return userActions.ViewWatchHistory;
+                    return userActions.ViewWatchHistory;
                 case 3:
-                return userActions.ChangeGenrePreferences;
+                    return userActions.ChangeGenrePreferences;
                 case 4:
-                return MainMenu;
+                    return MainMenu;
                 default:
-                return null;
+                    return null;
             }
         }
         #endregion

@@ -483,7 +483,7 @@ namespace Project284
             Console.WriteLine("==============");
             Console.WriteLine($"Username: {LoggedInUser.Username}");
             Console.WriteLine($"Email: {LoggedInUser.Email}");
-<<<<<<< Updated upstream
+
             Console.WriteLine("Preferred Genres:");
             foreach (var genre in LoggedInUser.PreferredGenres)
             {
@@ -495,12 +495,6 @@ namespace Project284
             Console.ReadKey();
 
             return Menus.ProfileMenu;
-=======
-
-            Console.WriteLine("Press any key to return...");
-            Console.ReadKey();
-            return Menus.MainMenu;
->>>>>>> Stashed changes
         }
 
         public Menus.MenuHandlerDelegate ViewWatchHistory()
@@ -763,6 +757,11 @@ namespace Project284
                 }
             }
             return password;
+        }
+
+        internal Menus.MenuHandlerDelegate SearchShows()
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }
