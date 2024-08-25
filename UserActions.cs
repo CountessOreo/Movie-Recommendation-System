@@ -126,12 +126,30 @@ namespace Project284
         }
 
         /// <summary>
-        /// 
+        /// Displays a menu using an enum, prompting the user to choose the criteria they want to base their search on, switch case handles the users input, based on the users choice from the enum console will display the appropriate message for that criteria
+        /// User is then prompted to enter, based on their choice of criteria, genres, title, duration, air dates, or type and the appropriate filters will be utilized to retrive the results form the database and stores it in the results list
+        /// Results list is then used in the Random50 method to acquire only 50 entries from the results list (can be modified if need be) and stores it in another list called randomShows.
+        /// A thread and stop watch are created and started, the stopwatch is to time the thread process and to display to the user how long its taking to process the request and the thread utilizes the DisplayResults method which uses the randomShows list
+        /// DisplayResults method is put to sleep for three seconds to give the illusion that the system is taking a little bit of time so search for the results and display them(otherwise the processing request string will display for 0.3-0.5 seconds). It loops through the list of randomshows displaying each result and their appropriate information
+        /// After displaying results, Random50 method continues, checking if there are any shows in randomShows, if it is empty an appropriate meassage will show ending the process and returning to mainmenu
+        /// ...if its not empty, the user is prompted a yes or no question, whether they want to filter through the GIVEN list of shows for a more indepth search. If no, returns to mainmenu, if yes the randomShows list is sent to the SearchShows method and utilizes that randomShows list as the results list throughout the method
         /// </summary>
         /// <returns></returns>
-        public Menus.MenuHandlerDelegate SearchShows()
+
+        #region Enums for SearchShows
+        enum CriteriaMenu
         {
-            Console.Clear();
+            Genre = 1,
+            Title,
+            Duration,
+            Air_Dates,
+            Type
+        }
+        #endregion
+
+        public Menus.MenuHandlerDelegate SearchShows(List<DatabaseRecord> shows = null)
+        {
+            /*Console.Clear();
             Console.WriteLine("Search for Shows");
             Console.WriteLine("1. By Genre");
             Console.WriteLine("2. By Title");
@@ -158,9 +176,272 @@ namespace Project284
             }
 
             DisplaySearchResults(results);
-            Console.ReadLine();
+            Console.ReadLine();*/
+
+            int menuCount = 1, minDuration, maxDuration, startYear, endYear;
+            string genresInput, title, type;
+            bool looping = true;
+
+            Console.Clear();
+            Console.WriteLine("What criteria do you want to base your search on:");
+            foreach (string option in Enum.GetNames(typeof(CriteriaMenu)))
+            {
+                Console.WriteLine("{0}. {1}", menuCount, option.Replace("_", " "));
+                menuCount++;
+            }
+
+            int critOption = Menus.GetValidInput(1, 5);
+
+            //Initializes the results list with either a provided list or an empty one if not provided a list
+            List<DatabaseRecord> results = shows ?? new List<DatabaseRecord>();
+
+            switch ((CriteriaMenu)critOption)
+            {
+                case CriteriaMenu.Genre:
+
+                    while (looping)
+                    {
+                        Console.Clear();
+
+                        try
+                        {
+                            Console.WriteLine("Enter genres, separated by a comma:");
+                            genresInput = Console.ReadLine();
+                            List<string> genres = new List<string>(genresInput.Split(", "));
+
+                            if (genresInput.Trim() == "" || genresInput == null)
+                            {
+                                throw new ArgumentException("Error: Please dont leave this criteria empty.");
+                            }
+                            else if (shows == null)
+                            {
+                                results = db.FilterByGenre(genres);
+                                looping = false;
+                            }
+                            else
+                            {
+                                results = db.FilterByGenre(shows, genres);
+                                looping = false;
+                            }
+
+                        }
+                        catch (ArgumentException NullOrEmpt)
+                        {
+                            Console.WriteLine("{0}\nPress any key to retry...", NullOrEmpt.Message);
+                            Console.ReadKey();
+                        }
+                    }
+                    Random50(results);
+                    break;
+
+                case CriteriaMenu.Title:
+
+                    while (looping)
+                    {
+                        Console.Clear();
+
+                        try
+                        {
+                            Console.WriteLine("Enter title:");
+                            title = Console.ReadLine();
+
+                            if (title.Trim() == "")
+                            {
+                                throw new ArgumentException("Error: Please dont leave this criteria empty.");
+                            }
+                            else if (shows == null)
+                            {
+                                results = db.FilterByTitle(title);
+                                looping = false;
+                            }
+                            else
+                            {
+                                results = db.FilterByTitle(shows, title);
+                                looping = false;
+                            }
+
+                        }
+                        catch (ArgumentException NullOrEmpt)
+                        {
+                            Console.WriteLine("{0} \nPress any key to retry...", NullOrEmpt.Message);
+                            Console.ReadKey();
+                        }
+                    }
+                    Random50(results);
+                    break;
+
+                case CriteriaMenu.Duration:
+                    while (looping)
+                    {
+                        Console.Clear();
+
+                        try
+                        {
+                            Console.WriteLine("Enter minimum runtime in minutes:");
+                            minDuration = int.Parse(Console.ReadLine());
+                            Console.WriteLine("Enter maximum runtime in minutes:");
+                            maxDuration = int.Parse(Console.ReadLine());
+
+                            if (maxDuration < minDuration)
+                            {
+                                throw new ArgumentException("Error: maximum duration cannot be lower than minimum duration.");
+                            }
+                            else if (shows == null)
+                            {
+                                results = db.FilterByDuration(minDuration, maxDuration);
+                                looping = false;
+                            }
+                            else
+                            {
+                                results = db.FilterByDuration(shows, minDuration, maxDuration);
+                                looping = false;
+                            }
+
+                        }
+                        catch (ArgumentException lessThan)
+                        {
+                            Console.WriteLine("{0} \nPress any key to retry...", lessThan.Message);
+                            Console.ReadKey();
+                        }
+                        catch (FormatException)
+                        {
+                            Console.WriteLine("Error: Please enter whole numbers for the durations. \nPress any key to retry...");
+                            Console.ReadKey();
+                        }
+                    }
+                    Random50(results);
+                    break;
+
+                case CriteriaMenu.Air_Dates:
+
+                    while (looping)
+                    {
+                        Console.Clear();
+
+                        try
+                        {
+                            Console.WriteLine("Between which two years would you like to search?");
+                            Console.WriteLine("Enter start year:");
+                            startYear = int.Parse(Console.ReadLine());
+                            Console.WriteLine("Enter end year:");
+                            endYear = int.Parse(Console.ReadLine());
+
+                            if (endYear < startYear)
+                            {
+                                throw new ArgumentException("Error: end year cannot be lower than start year.");
+                            }
+                            else if (shows == null)
+                            {
+                                results = db.FilterByYearRange(startYear, endYear);
+                                looping = false;
+                            }
+                            else
+                            {
+                                results = db.FilterByYearRange(shows, startYear, endYear);
+                                looping = false;
+                            }
+                        }
+                        catch (FormatException)
+                        {
+                            Console.WriteLine("Error: Please enter whole numbers for the years\nPress any key to retry...");
+                            Console.ReadKey();
+                        }
+                        catch (ArgumentException lessThan)
+                        {
+                            Console.WriteLine("{0}\nPress any key to retry...", lessThan.Message);
+                            Console.ReadKey();
+                        }
+                    }
+                    Random50(results);
+                    break;
+
+                case CriteriaMenu.Type:
+                    while (looping)
+                    {
+                        Console.Clear();
+
+                        try
+                        {
+                            Console.WriteLine("Enter type (Movie, TvSeries, Short, etc):");
+                            type = Console.ReadLine();
+
+                            if (type.Trim() == "" || type == null)
+                            {
+                                throw new ArgumentException("Error: Please dont leave this criteria empty.");
+                            }
+                            else if (shows == null)
+                            {
+                                results = db.FilterByType(type);
+                                looping = false;
+                            }
+                            else
+                            {
+                                results = db.FilterByType(shows, type);
+                                looping = false;
+                            }
+                        }
+                        catch (ArgumentException NullOrEmpt)
+                        {
+                            Console.WriteLine("{0}\nPress any key to retry...", NullOrEmpt.Message);
+                            Console.ReadKey();
+                        }
+                    }
+                    Random50(results);
+                    break;
+            }
             return Menus.MainMenu;
         }
+
+        #region Methods For SearchShows
+        private void Random50(List<DatabaseRecord> results)
+        {
+            Random random = new Random();
+            var randomShows = results.OrderBy(x => random.Next()).Take(50).ToList();
+
+            Thread srcThr = new Thread(() => DisplayResults(randomShows));
+            Stopwatch srcSW = new Stopwatch();
+            srcSW.Start();
+            srcThr.Start();
+
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("System is processing your request...{0} seconds", Math.Round(srcSW.Elapsed.TotalSeconds));
+                Thread.Sleep(1000);
+            }
+            while (srcThr.IsAlive);
+
+            srcThr.Join();
+            srcSW.Stop();
+
+            if (randomShows.Count == 0)
+            {
+                Console.WriteLine("No shows found matching the criteria.\nPress any key to return...");
+                Console.ReadKey();
+            }
+            else
+            {
+                Console.WriteLine("\nWould you like to filter through the provided list for a more advanced search? Y/N");
+                string response = Console.ReadLine().ToUpper();
+
+                if (response == "Y")
+                {
+                    SearchShows(randomShows);
+                }
+            }
+        }
+
+        private void DisplayResults(List<DatabaseRecord> randomShows)
+        {
+            Thread.Sleep(3000);
+
+            Console.WriteLine("\nShows that meet the User's search criteria:\n===========================================\n");
+            foreach (var show in randomShows)
+            {
+                Console.WriteLine($"Title: {show.PrimaryTitle}, Type: {show.TitleType}, Year: {show.StartYear}, Duration: {show.RuntimeMinutes} minutes, Genres: {string.Join(", ", show.Genres)}");
+            }
+        }
+        #endregion
 
         /// <summary>
         /// 
@@ -286,7 +567,7 @@ namespace Project284
             return Menus.ProfileMenu;
         }
 
-        #region Recommend method has isssues
+        #region Recommend method has isssues...Not
         public Menus.MenuHandlerDelegate RecommendShows()
         {
 
