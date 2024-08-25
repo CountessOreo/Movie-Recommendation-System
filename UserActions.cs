@@ -126,15 +126,9 @@ namespace Project284
         }
 
         /// <summary>
-        /// Displays a menu using an enum, prompting the user to choose the criteria they want to base their search on, switch case handles the users input, based on the users choice from the enum console will display the appropriate message for that criteria
-        /// User is then prompted to enter, based on their choice of criteria, genres, title, duration, air dates, or type and the appropriate filters will be utilized to retrive the results form the database and stores it in the results list
-        /// Results list is then used in the Random50 method to acquire only 50 entries from the results list (can be modified if need be) and stores it in another list called randomShows.
-        /// A thread and stop watch are created and started, the stopwatch is to time the thread process and to display to the user how long its taking to process the request and the thread utilizes the DisplayResults method which uses the randomShows list
-        /// DisplayResults method is put to sleep for three seconds to give the illusion that the system is taking a little bit of time so search for the results and display them(otherwise the processing request string will display for 0.3-0.5 seconds). It loops through the list of randomshows displaying each result and their appropriate information
-        /// After displaying results, Random50 method continues, checking if there are any shows in randomShows, if it is empty an appropriate meassage will show ending the process and returning to mainmenu
-        /// ...if its not empty, the user is prompted a yes or no question, whether they want to filter through the GIVEN list of shows for a more indepth search. If no, returns to mainmenu, if yes the randomShows list is sent to the SearchShows method and utilizes that randomShows list as the results list throughout the method
+        /// Allows user to search for a show in a database based on criteria
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A delegate that points to the main menu handler after a successful login</returns>
 
         #region Enums for SearchShows
         enum CriteriaMenu
