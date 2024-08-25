@@ -247,7 +247,7 @@ namespace Project284
 
                             if (title.Trim() == "")
                             {
-                                throw new ArgumentException("Error: Please dont leave this criteria empty.");
+                                throw new ArgumentException("Error: Please don't leave this criteria empty.");
                             }
                             else if (shows == null)
                             {
