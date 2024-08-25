@@ -138,56 +138,52 @@ namespace Project284
 
         public Menus.MenuHandlerDelegate SearchShows(List<DatabaseRecord> shows = null)
         {
+            // Initialize variables
             int menuCount = 1, minDuration, maxDuration, startYear, endYear;
             string genresInput, title, type;
             bool looping = true;
 
             Console.Clear();
             Console.WriteLine("What criteria do you want to base your search on:");
+
+            // Display search criteria options
             foreach (string option in Enum.GetNames(typeof(CriteriaMenu)))
             {
-                Console.WriteLine("{0}. {1}", menuCount, option.Replace("_", " "));
+                Console.WriteLine($"{menuCount}. {option.Replace("_", " ")}");
                 menuCount++;
             }
 
+            // Get valid input for the criteria selection
             int critOption = Menus.GetValidInput(1, 5);
 
-            //Initializes the results list with either a provided list or an empty one if not provided a list
+            // Initialize the results list with the provided list or an empty one
             List<DatabaseRecord> results = shows ?? new List<DatabaseRecord>();
 
+            // Handle different search criteria
             switch ((CriteriaMenu)critOption)
             {
                 case CriteriaMenu.Genre:
-
                     while (looping)
                     {
                         Console.Clear();
-
                         try
                         {
                             Console.WriteLine("Enter genres, separated by a comma:");
                             genresInput = Console.ReadLine();
-                            List<string> genres = new List<string>(genresInput.Split(", "));
+                            List<string> genres = genresInput.Split(", ").Select(g => g.Trim()).ToList();
 
-                            if (genresInput.Trim() == "" || genresInput == null)
+                            if (string.IsNullOrWhiteSpace(genresInput))
                             {
-                                throw new ArgumentException("Error: Please dont leave this criteria empty.");
-                            }
-                            else if (shows == null)
-                            {
-                                results = db.FilterByGenre(genres);
-                                looping = false;
-                            }
-                            else
-                            {
-                                results = db.FilterByGenre(shows, genres);
-                                looping = false;
+                                throw new ArgumentException("Error: Please don't leave this criteria empty.");
                             }
 
+                            // Filter by genre
+                            results = (shows == null) ? db.FilterByGenre(genres) : db.FilterByGenre(shows, genres);
+                            looping = false;
                         }
-                        catch (ArgumentException NullOrEmpt)
+                        catch (ArgumentException ex)
                         {
-                            Console.WriteLine("{0}\nPress any key to retry...", NullOrEmpt.Message);
+                            Console.WriteLine($"{ex.Message}\nPress any key to retry...");
                             Console.ReadKey();
                         }
                     }
@@ -195,35 +191,26 @@ namespace Project284
                     break;
 
                 case CriteriaMenu.Title:
-
                     while (looping)
                     {
                         Console.Clear();
-
                         try
                         {
                             Console.WriteLine("Enter title:");
                             title = Console.ReadLine();
 
-                            if (title.Trim() == "")
+                            if (string.IsNullOrWhiteSpace(title))
                             {
                                 throw new ArgumentException("Error: Please don't leave this criteria empty.");
                             }
-                            else if (shows == null)
-                            {
-                                results = db.FilterByTitle(title);
-                                looping = false;
-                            }
-                            else
-                            {
-                                results = db.FilterByTitle(shows, title);
-                                looping = false;
-                            }
 
+                            // Filter by title
+                            results = (shows == null) ? db.FilterByTitle(title) : db.FilterByTitle(shows, title);
+                            looping = false;
                         }
-                        catch (ArgumentException NullOrEmpt)
+                        catch (ArgumentException ex)
                         {
-                            Console.WriteLine("{0} \nPress any key to retry...", NullOrEmpt.Message);
+                            Console.WriteLine($"{ex.Message} \nPress any key to retry...");
                             Console.ReadKey();
                         }
                     }
@@ -234,9 +221,9 @@ namespace Project284
                     while (looping)
                     {
                         Console.Clear();
-
                         try
                         {
+                            // Get and validate duration range
                             Console.WriteLine("Enter minimum runtime in minutes:");
                             minDuration = int.Parse(Console.ReadLine());
                             Console.WriteLine("Enter maximum runtime in minutes:");
@@ -246,21 +233,14 @@ namespace Project284
                             {
                                 throw new ArgumentException("Error: maximum duration cannot be lower than minimum duration.");
                             }
-                            else if (shows == null)
-                            {
-                                results = db.FilterByDuration(minDuration, maxDuration);
-                                looping = false;
-                            }
-                            else
-                            {
-                                results = db.FilterByDuration(shows, minDuration, maxDuration);
-                                looping = false;
-                            }
 
+                            // Filter by duration
+                            results = (shows == null) ? db.FilterByDuration(minDuration, maxDuration) : db.FilterByDuration(shows, minDuration, maxDuration);
+                            looping = false;
                         }
-                        catch (ArgumentException lessThan)
+                        catch (ArgumentException ex)
                         {
-                            Console.WriteLine("{0} \nPress any key to retry...", lessThan.Message);
+                            Console.WriteLine($"{ex.Message} \nPress any key to retry...");
                             Console.ReadKey();
                         }
                         catch (FormatException)
@@ -273,13 +253,12 @@ namespace Project284
                     break;
 
                 case CriteriaMenu.Air_Dates:
-
                     while (looping)
                     {
                         Console.Clear();
-
                         try
                         {
+                            // Get and validate year range
                             Console.WriteLine("Between which two years would you like to search?");
                             Console.WriteLine("Enter start year:");
                             startYear = int.Parse(Console.ReadLine());
@@ -290,25 +269,19 @@ namespace Project284
                             {
                                 throw new ArgumentException("Error: end year cannot be lower than start year.");
                             }
-                            else if (shows == null)
-                            {
-                                results = db.FilterByYearRange(startYear, endYear);
-                                looping = false;
-                            }
-                            else
-                            {
-                                results = db.FilterByYearRange(shows, startYear, endYear);
-                                looping = false;
-                            }
+
+                            // Filter by year range
+                            results = (shows == null) ? db.FilterByYearRange(startYear, endYear) : db.FilterByYearRange(shows, startYear, endYear);
+                            looping = false;
                         }
                         catch (FormatException)
                         {
                             Console.WriteLine("Error: Please enter whole numbers for the years\nPress any key to retry...");
                             Console.ReadKey();
                         }
-                        catch (ArgumentException lessThan)
+                        catch (ArgumentException ex)
                         {
-                            Console.WriteLine("{0}\nPress any key to retry...", lessThan.Message);
+                            Console.WriteLine($"{ex.Message}\nPress any key to retry...");
                             Console.ReadKey();
                         }
                     }
@@ -319,40 +292,37 @@ namespace Project284
                     while (looping)
                     {
                         Console.Clear();
-
                         try
                         {
+                            // Get and validate type input
                             Console.WriteLine("Enter type (Movie, TvSeries, Short, etc):");
                             type = Console.ReadLine();
 
-                            if (type.Trim() == "" || type == null)
+                            if (string.IsNullOrWhiteSpace(type))
                             {
-                                throw new ArgumentException("Error: Please dont leave this criteria empty.");
+                                throw new ArgumentException("Error: Please don't leave this criteria empty.");
                             }
-                            else if (shows == null)
-                            {
-                                results = db.FilterByType(type);
-                                looping = false;
-                            }
-                            else
-                            {
-                                results = db.FilterByType(shows, type);
-                                looping = false;
-                            }
+
+                            // Filter by type
+                            results = (shows == null) ? db.FilterByType(type) : db.FilterByType(shows, type);
+                            looping = false;
                         }
-                        catch (ArgumentException NullOrEmpt)
+                        catch (ArgumentException ex)
                         {
-                            Console.WriteLine("{0}\nPress any key to retry...", NullOrEmpt.Message);
+                            Console.WriteLine($"{ex.Message}\nPress any key to retry...");
                             Console.ReadKey();
                         }
                     }
                     Random50(results);
                     break;
             }
+
             return Menus.MainMenu;
         }
 
         #region Methods For SearchShows
+
+        // Randomly select up to 50 shows from the results and display them
         private void Random50(List<DatabaseRecord> results)
         {
             Random random = new Random();
@@ -363,6 +333,7 @@ namespace Project284
             srcSW.Start();
             srcThr.Start();
 
+            // Display loading message while processing
             do
             {
                 Console.Clear();
@@ -391,6 +362,7 @@ namespace Project284
             }
         }
 
+        // Display the selected shows in the console
         private void DisplayResults(List<DatabaseRecord> randomShows)
         {
             Thread.Sleep(3000);
@@ -401,17 +373,21 @@ namespace Project284
                 Console.WriteLine($"Title: {show.PrimaryTitle}, Type: {show.TitleType}, Year: {show.StartYear}, Duration: {show.RuntimeMinutes} minutes, Genres: {string.Join(", ", show.Genres)}");
             }
         }
+
         #endregion
+
 
         public Menus.MenuHandlerDelegate RateShow()
         {
             try
             {
+                // Clear the console and prompt the user to enter the title of the show they want to rate
                 Console.Clear();
                 Console.WriteLine("Rate a Show\nEnter the title of the show you want to rate:");
                 string title = Console.ReadLine();
 
                 var similarShows = db.FilterByTitle(title);
+
                 if (similarShows.Count == 0)
                 {
                     Console.WriteLine("No shows found with that title. Press any key to go back...");
@@ -426,10 +402,13 @@ namespace Project284
                         Console.WriteLine($"{i + 1}. {show.PrimaryTitle} ({show.StartYear}) - Genres: {string.Join(", ", show.Genres)}");
                     }
 
+                    // Prompt the user to select a show by its index
                     if (int.TryParse(Console.ReadLine(), out int selectedShowIndex) && selectedShowIndex > 0 && selectedShowIndex <= similarShows.Count)
                     {
                         var selectedShow = similarShows[selectedShowIndex - 1];
                         string rating;
+
+                        // Loop until the user provides a valid response ('like' or 'dislike')
                         do
                         {
                             Console.WriteLine($"You selected: {selectedShow.PrimaryTitle} ({selectedShow.StartYear}) - Genres: {string.Join(", ", selectedShow.Genres)}");
@@ -437,22 +416,23 @@ namespace Project284
                             rating = Console.ReadLine().Trim().ToLower();
                         } while (rating != "like" && rating != "dislike");
 
+                        // Determine the adjustment value based on the user's rating
                         int adjustment = (rating == "like") ? 1 : -1;
 
+                        // Adjust the weight of each genre in the user's preferences
                         foreach (var genre in selectedShow.Genres)
                         {
                             if (LoggedInUser.PreferredGenres.ContainsKey(genre))
                             {
                                 LoggedInUser.PreferredGenres[genre] += adjustment;
 
-                                // Ensure the genre weight doesn't go below 0
+                                // Ensure that the genre weight does not go below 0
                                 if (LoggedInUser.PreferredGenres[genre] < 0)
                                 {
                                     LoggedInUser.PreferredGenres[genre] = 0;
                                 }
                             }
                         }
-
                         Console.WriteLine("Rating recorded and preferences updated. Press any key to continue...");
                         Console.ReadLine();
                     }
@@ -467,10 +447,8 @@ namespace Project284
             {
                 Console.WriteLine($"An error occurred while rating the show: {ex.Message}");
             }
-
             return Menus.MainMenu;
         }
-
 
 
         public Menus.MenuHandlerDelegate DisplayDetails()
@@ -484,14 +462,19 @@ namespace Project284
             {
                 Console.WriteLine($"{genre.Key}: {genre.Value}");
             }
+
+            // Prompt the user to press any key to return to the profile menu
             Console.WriteLine("Press any key to go back...");
             Console.ReadKey();
+
             return Menus.ProfileMenu;
         }
+
         public Menus.MenuHandlerDelegate ViewWatchHistory()
         {
             Console.Clear();
             Console.WriteLine("Watch History:");
+
             foreach (var record in LoggedInUser.WatchHistory)
             {
                 Console.WriteLine($"{record.PrimaryTitle} ({record.StartYear}) - Genres: {string.Join(", ", record.Genres)}");
@@ -500,25 +483,31 @@ namespace Project284
             Console.ReadKey();
             return Menus.ProfileMenu;
         }
+
         public Menus.MenuHandlerDelegate ChangeGenrePreferences()
         {
             Console.Clear();
             Console.WriteLine("Change Genre Preferences");
             Console.WriteLine("Enter your new favourite genres (e.g., Action, Comedy, Drama):");
 
+            // Read the user's input and split it into a list of genres
             string[] genres = Console.ReadLine().Split(',');
             var newPreferences = new Dictionary<string, int>();
 
+            // Add each genre to the new preferences dictionary with an initial weight of 1
             foreach (string genre in genres)
             {
                 newPreferences[genre.Trim()] = 1;
             }
 
             LoggedInUser.UpdateGenrePreferences(newPreferences);
+
             Console.WriteLine("Preferences updated! Press any key to go back...");
             Console.ReadKey();
+
             return Menus.ProfileMenu;
         }
+
 
         public Menus.MenuHandlerDelegate RecommendShows()
         {
