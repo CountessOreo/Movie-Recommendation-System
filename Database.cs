@@ -163,10 +163,19 @@ namespace Watt_2_Watch
             {
                 foreach (var genre in rec.Genres)
                 {
-                    if (genres.Contains(genre, StringComparer.OrdinalIgnoreCase))
+                    bool matchFound = false;
+                    foreach (var g in genres)
+                    {
+                        if (g.ToLower() == genre.ToLower())
+                        {
+                            matchFound = true;
+                            break;
+                        }
+                    }
+
+                    if (matchFound)
                     {
                         filteredRecords.Add(rec);
-                        break;
                     }
                 }
             }
@@ -183,7 +192,18 @@ namespace Watt_2_Watch
             {
                 foreach (var genre in rec.Genres)
                 {
-                    if (genres.Contains(genre, StringComparer.OrdinalIgnoreCase))
+                    bool matchFound = false;
+
+                    foreach (var g in genres)
+                    {
+                        if (g.ToLower() == genre.ToLower())
+                        {
+                            matchFound = true;
+                            break;
+                        }
+                    }
+
+                    if (matchFound)
                     {
                         filteredRecords.Add(rec);
                         break;
@@ -201,7 +221,7 @@ namespace Watt_2_Watch
 
             foreach (var rec in filteredByType)
             {
-                if (rec.PrimaryTitle.Contains(title, StringComparison.OrdinalIgnoreCase) || rec.OriginalTitle.Contains(title, StringComparison.OrdinalIgnoreCase))
+                if (rec.PrimaryTitle.ToLower().Contains(title.ToLower()) || rec.OriginalTitle.ToLower().Contains(title.ToLower()))
                 {
                     filteredRecords.Add(rec);
                 }
@@ -217,7 +237,7 @@ namespace Watt_2_Watch
 
             foreach (var rec in filteredByType)
             {
-                if (rec.PrimaryTitle.Contains(title, StringComparison.OrdinalIgnoreCase) || rec.OriginalTitle.Contains(title, StringComparison.OrdinalIgnoreCase))
+                if (rec.PrimaryTitle.ToLower().Contains(title.ToLower()) || rec.OriginalTitle.ToLower().Contains(title.ToLower()))
                 {
                     filteredRecords.Add(rec);
                 }
@@ -263,7 +283,7 @@ namespace Watt_2_Watch
 
             foreach (var rec in Records)
             {
-                if (rec.TitleType == showType)
+                if (rec.TitleType.ToLower() == showType.ToLower())
                 {
                     filteredRecords.Add(rec);
                 }
@@ -277,7 +297,7 @@ namespace Watt_2_Watch
 
             foreach (var rec in recordList)
             {
-                if (rec.TitleType == showType)
+                if (rec.TitleType.ToLower() == showType.ToLower())
                 {
                     filteredRecords.Add(rec);
                 }
