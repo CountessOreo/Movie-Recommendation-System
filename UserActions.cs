@@ -459,7 +459,6 @@ namespace Project284
         }
 
 
-
         public Menus.MenuHandlerDelegate DisplayDetails()
         {
             Console.Clear();
@@ -507,7 +506,6 @@ namespace Project284
             return Menus.ProfileMenu;
         }
 
-        #region Recommend method has isssues...Not
         public Menus.MenuHandlerDelegate RecommendShows()
         {
 
@@ -569,8 +567,6 @@ namespace Project284
         #endregion
 
         #endregion 
-
-        #endregion
 
 
         #region Menu validation methods
