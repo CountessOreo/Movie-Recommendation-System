@@ -4,16 +4,24 @@ namespace Watt_2_Watch
 {
     public class User
     {
+        #region Constructor
         public User() { }
+        #endregion
 
-
+        #region Properties
         public string Username { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
         public Dictionary<string, int> PreferredGenres { get; private set; } = new Dictionary<string, int>();
         public List<Database.DatabaseRecord> WatchHistory { get; private set; } = new List<Database.DatabaseRecord>();
+        #endregion
 
-
+        #region User genre preference methods
+        /// <summary>
+        /// Adjusts the rank of a user's preferred genre by modifying its weight.
+        /// </summary>
+        /// <param name="genre">The genre whose preference weight will be changed.</param>
+        /// <param name="weight">The amount to change the genre's weight by. Positive values increase the preference, while negative values decrease it.</param>
         public void AddGenrePreference(string genre, int weight)
         {
             if (PreferredGenres.ContainsKey(genre))
@@ -22,9 +30,14 @@ namespace Watt_2_Watch
                 PreferredGenres[genre] = weight;
         }
 
+        /// <summary>
+        /// Replaces the current genre preferences with a new set of preferences.
+        /// </summary>
+        /// <param name="newPreferences">A dictionary containing genres and their respective weights to update the user's preferences.</param>
         public void UpdateGenrePreferences(Dictionary<string, int> newPreferences)
         {
             PreferredGenres = newPreferences;
         }
+        #endregion
     }
 }
