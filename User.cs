@@ -5,14 +5,18 @@ namespace Watt_2_Watch
     public class User
     {
         #region Constructor
-        public User() { }
+        public User() 
+        {
+            PreferredGenres = new Dictionary<string, int>();
+            WatchHistory = new List<Database.DatabaseRecord>();
+        }
         #endregion
 
         #region Properties
         public string Username { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
-        public Dictionary<string, int> PreferredGenres { get; private set; } = new Dictionary<string, int>();
+        public Dictionary<string, int> PreferredGenres { get; set; } = new Dictionary<string, int>();
         public List<Database.DatabaseRecord> WatchHistory { get; private set; } = new List<Database.DatabaseRecord>();
         #endregion
 
@@ -37,6 +41,26 @@ namespace Watt_2_Watch
         public void UpdateGenrePreferences(Dictionary<string, int> newPreferences)
         {
             PreferredGenres = newPreferences;
+        }
+        #endregion
+
+        #region User Details Methods
+        public void DisplayDetails()
+        {
+            Console.WriteLine($"Username: {Username}");
+            Console.WriteLine($"Email: {Email}");
+            Console.WriteLine("Preferred Genres:");
+            if (PreferredGenres.Count > 0)
+            {
+                foreach (var genre in PreferredGenres)
+                {
+                    Console.WriteLine($"{genre.Key}: {genre.Value}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No preferred genres set.");
+            }
         }
         #endregion
     }

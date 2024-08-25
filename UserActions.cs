@@ -9,8 +9,18 @@ namespace Project284
 {
     internal class UserActions
     {
+        #region Delegates and Events
+        public delegate void SignUpSuccessHandler(string message);
+        public event SignUpSuccessHandler OnSignUpSuccess;
+        #endregion
+
         #region Constructor
-        public UserActions() {}
+        public UserActions() 
+        {      
+            Users = new List<User>();
+            Users.Add(new User { Username = "admin", Password = "@dmin123" });
+            OnSignUpSuccess += message => Console.WriteLine(message);
+        }
         #endregion
 
         #region Properties
@@ -24,6 +34,8 @@ namespace Project284
         /// Handles the user sign-up process, including validating credentials, selecting favourite genres, and creating a new user account.
         /// </summary>
         /// <returns>A delegate that points to the main menu handler after a successful sign-up.</returns>
+        /// 
+
         public Menus.MenuHandlerDelegate SignUp()
         {
             Console.Clear();
@@ -77,15 +89,21 @@ namespace Project284
                 }
             } while (invalidGenres.Any());
 
+            // Create a dictionary with preferred genres
+            var preferredGenres = new Dictionary<string, int>();
             foreach (string genre in genres)
             {
-                newUser.AddGenrePreference(genre, 1);
+                preferredGenres[genre] = 1;
             }
+
+            newUser.UpdateGenrePreferences(preferredGenres);
 
             Users.Add(newUser);
             LoggedInUser = newUser;
+            //event
+            OnSignUpSuccess?.Invoke("You've successfully created an account.");
 
-            Console.WriteLine("Account created successfully! Press any key to continue...");
+            Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
             return Menus.MainMenu;
         }
@@ -453,10 +471,19 @@ namespace Project284
 
         public Menus.MenuHandlerDelegate DisplayDetails()
         {
+            if (LoggedInUser == null)
+            {
+                Console.WriteLine("No user is currently logged in.");
+                Console.ReadKey();
+                return Menus.MainMenu;
+            }
+
             Console.Clear();
-            Console.WriteLine("User Details");
+            Console.WriteLine("USER DETAILS");
+            Console.WriteLine("==============");
             Console.WriteLine($"Username: {LoggedInUser.Username}");
             Console.WriteLine($"Email: {LoggedInUser.Email}");
+<<<<<<< Updated upstream
             Console.WriteLine("Preferred Genres:");
             foreach (var genre in LoggedInUser.PreferredGenres)
             {
@@ -468,6 +495,12 @@ namespace Project284
             Console.ReadKey();
 
             return Menus.ProfileMenu;
+=======
+
+            Console.WriteLine("Press any key to return...");
+            Console.ReadKey();
+            return Menus.MainMenu;
+>>>>>>> Stashed changes
         }
 
         public Menus.MenuHandlerDelegate ViewWatchHistory()
@@ -511,11 +544,17 @@ namespace Project284
 
         public Menus.MenuHandlerDelegate RecommendShows()
         {
+            if (LoggedInUser == null || LoggedInUser.PreferredGenres == null)
+            {
+                Console.WriteLine("User is not logged in or preferences are not set.");
+                Console.ReadKey();
+                return Menus.MainMenu;
+            }
 
-            //Orders the list in acceding order
-            var sortedGenres = LoggedInUser.PreferredGenres.OrderBy(gr => gr.Value).Select(gr => gr.Key).ToList();
-            //Reverses order of list to display the most ranked genre first
-            sortedGenres.Reverse();
+            var sortedGenres = LoggedInUser.PreferredGenres
+                .OrderBy(gr => gr.Value)
+                .Select(gr => gr.Key)
+                .ToList();
 
             Thread thr = new Thread(() => PrintResults(sortedGenres));
             Stopwatch sw = new Stopwatch();
@@ -537,7 +576,6 @@ namespace Project284
             sw.Stop();
 
             Console.WriteLine("Press any key to return...");
-
             Console.ReadKey();
             return Menus.MainMenu;
         }
