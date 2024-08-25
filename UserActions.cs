@@ -32,7 +32,7 @@ namespace Project284
         public Menus.MenuHandlerDelegate SignUp()
         {
             Console.Clear();
-            Console.WriteLine("Sign Up");
+            Console.WriteLine("SIGN UP");
             Console.WriteLine("==========");
 
             // Validates user credentials
@@ -58,7 +58,7 @@ namespace Project284
                 Console.WriteLine("Enter your favourite genres (e.g., Action, Comedy, Drama):");
                 string inputGenres = Console.ReadLine();
 
-                // Splits the users inputs with a comma and removes excess spacing
+                // Splits the users inputs at a comma and removes excess spacing
                 genres = inputGenres.Split(',').Select(g => g.Trim()).ToArray();
 
                 invalidGenres = new List<string>();
@@ -95,11 +95,17 @@ namespace Project284
             return Menus.MainMenu;
         }
 
+        /// <summary>
+        /// Handles the user login process and validating credentials.
+        /// </summary>
+        /// <returns>A delegate that points to the main menu handler after a successful login.</returns>
         public Menus.MenuHandlerDelegate Login()
         {
             Console.Clear();
-            Console.WriteLine("Login");
+            Console.WriteLine("LOGIN");
+            Console.WriteLine("========");
 
+            // Validates user credentials
             string username = LoginGetValidUsername();
             string password = LoginGetValidPassword();
 
@@ -108,18 +114,21 @@ namespace Project284
                 if (user.Username == username && user.Password == password)
                 {
                     LoggedInUser = user;
-                    Console.WriteLine("Login successful! Press any key to continue...");
-                    Console.WriteLine($"LoggedInUser set to: {LoggedInUser.Username}");
+                    Console.WriteLine($"Login successful! Welcome back {LoggedInUser.Username}. Press any key to continue...");
                     Console.ReadKey();
                     return Menus.MainMenu;
                 }
             }
 
-            Console.WriteLine("Login failed. Press any key to try again...");
+            Console.WriteLine("Login failed. Try again.");
             Console.ReadKey();
             return Menus.EntranceMenu;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public Menus.MenuHandlerDelegate SearchShows()
         {
             Console.Clear();
@@ -152,14 +161,22 @@ namespace Project284
             Console.ReadLine();
             return Menus.MainMenu;
         }
-        public Menus.MenuHandlerDelegate DisplaySearchResults(List<Database.DatabaseRecord> results)
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="results"></param>
+        /// <returns></returns>
+        public Menus.MenuHandlerDelegate DisplaySearchResults(List<DatabaseRecord> results)
         {
             if (results.Count > 0)
             {
-                Console.WriteLine("Search Results:");
+                Console.WriteLine("SEARCH RESULTS");
+                Console.WriteLine("================");
+
                 foreach (var show in results)
                 {
-                    Console.WriteLine($"{show.PrimaryTitle} ({show.StartYear}) - Genres: {string.Join(", ", show.Genres)}");
+                    Console.WriteLine($"{show.TitleType} {show.PrimaryTitle} ({show.StartYear}) - Genres: {string.Join(", ", show.Genres)}");
                 }
             }
             else
