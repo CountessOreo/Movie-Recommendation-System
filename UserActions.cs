@@ -22,17 +22,20 @@ namespace Project284
         public List<User> Users { get; set; } = new List<User>();
         public User LoggedInUser { get; set; } = null;
         public Database db { get; set; } = new Database(Properties.Resources.MoviesDatabase);
-
-        // We need an instance of the User class
         #endregion
 
         #region Public delegate functions
+        /// <summary>
+        /// Handles the user sign-up process, including validating credentials, selecting favourite genres, and creating a new user account.
+        /// </summary>
+        /// <returns>A delegate that points to the main menu handler after a successful sign-up.</returns>
         public Menus.MenuHandlerDelegate SignUp()
         {
             Console.Clear();
             Console.WriteLine("Sign Up");
             Console.WriteLine("==========");
 
+            // Validates user credentials
             string username = SignupGetValidUsername();
             string password = SignupGetValidPassword();
             string email = SignupGetValidEmail();
@@ -44,18 +47,32 @@ namespace Project284
                 Email = email
             };
 
-            var validGenres = db.GetValidGenres();
+            // Retrieves all possible genres from the database
+            List<string> validGenres = db.GetValidGenres();
 
             string[] genres;
             List<string> invalidGenres;
 
             do
             {
-                Console.WriteLine("Select your favourite genres (e.g., Action, Comedy, Drama):");
+                Console.WriteLine("Enter your favourite genres (e.g., Action, Comedy, Drama):");
                 string inputGenres = Console.ReadLine();
+
+                // Splits the users inputs with a comma and removes excess spacing
                 genres = inputGenres.Split(',').Select(g => g.Trim()).ToArray();
 
-                invalidGenres = genres.Where(g => !validGenres.Contains(g, StringComparer.OrdinalIgnoreCase)).ToList();
+                invalidGenres = new List<string>();
+
+                foreach (string genre in genres)
+                {
+                    // Checks if the user input genres match genres in the database (case-insensitive)
+                    bool isValid = validGenres.Contains(genre, StringComparer.OrdinalIgnoreCase);
+
+                    if (!isValid)
+                    {
+                        invalidGenres.Add(genre);
+                    }
+                }
 
                 if (invalidGenres.Any())
                 {
@@ -77,6 +94,7 @@ namespace Project284
             Console.ReadKey();
             return Menus.MainMenu;
         }
+
         public Menus.MenuHandlerDelegate Login()
         {
             Console.Clear();
