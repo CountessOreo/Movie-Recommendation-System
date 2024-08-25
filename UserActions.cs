@@ -429,13 +429,31 @@ namespace Project284
                     if (int.TryParse(Console.ReadLine(), out int selectedShowIndex) && selectedShowIndex > 0 && selectedShowIndex <= similarShows.Count)
                     {
                         var selectedShow = similarShows[selectedShowIndex - 1];
-                        int rating;
+                        string rating;
                         do
                         {
-                            Console.WriteLine($"You selected: {selectedShow.PrimaryTitle} ({selectedShow.StartYear}) - Genres: {string.Join(", ", selectedShow.Genres)}\nRate this show (1-5 stars):");
-                        } while (!int.TryParse(Console.ReadLine(), out rating) || rating < 1 || rating > 5);
+                            Console.WriteLine($"You selected: {selectedShow.PrimaryTitle} ({selectedShow.StartYear}) - Genres: {string.Join(", ", selectedShow.Genres)}");
+                            Console.WriteLine("Did you like or dislike this show? (Enter 'like' or 'dislike'):");
+                            rating = Console.ReadLine().Trim().ToLower();
+                        } while (rating != "like" && rating != "dislike");
 
-                        Console.WriteLine("Rating recorded. Press any key to continue...");
+                        int adjustment = (rating == "like") ? 1 : -1;
+
+                        foreach (var genre in selectedShow.Genres)
+                        {
+                            if (LoggedInUser.PreferredGenres.ContainsKey(genre))
+                            {
+                                LoggedInUser.PreferredGenres[genre] += adjustment;
+
+                                // Ensure the genre weight doesn't go below 0
+                                if (LoggedInUser.PreferredGenres[genre] < 0)
+                                {
+                                    LoggedInUser.PreferredGenres[genre] = 0;
+                                }
+                            }
+                        }
+
+                        Console.WriteLine("Rating recorded and preferences updated. Press any key to continue...");
                         Console.ReadLine();
                     }
                     else
@@ -447,11 +465,12 @@ namespace Project284
             }
             catch (Exception ex)
             {
-              Console.WriteLine($"An error occurred while rating the show: {ex.Message}");
+                Console.WriteLine($"An error occurred while rating the show: {ex.Message}");
             }
 
             return Menus.MainMenu;
         }
+
 
 
         public Menus.MenuHandlerDelegate DisplayDetails()

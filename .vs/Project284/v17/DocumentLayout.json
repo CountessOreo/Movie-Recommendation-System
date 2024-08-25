@@ -25,15 +25,15 @@
           "Children": [
             {
               "$type": "Bookmark",
-              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
-            },
-            {
-              "$type": "Bookmark",
               "Name": "ST:1:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
             },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{e506b91c-c606-466a-90a9-123d1d1e12b3}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
             },
             {
               "$type": "Document",
@@ -43,8 +43,7 @@
               "ToolTip": "D:\\prg\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
               "ViewState": "AgIAAN0SAAAAAAAAAAAUwPgSAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2024-08-24T10:43:48.515Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-24T10:43:48.515Z"
             },
             {
               "$type": "Document",
@@ -56,8 +55,7 @@
               "RelativeToolTip": "Menus.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAF4AAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-24T10:21:32.166Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-24T10:21:32.166Z"
             },
             {
               "$type": "Document",
@@ -67,7 +65,7 @@
               "RelativeDocumentMoniker": "UserActions.cs",
               "ToolTip": "C:\\Users\\lzr51\\Documents\\GitHub\\LatestPRG281\\UserActions.cs",
               "RelativeToolTip": "UserActions.cs",
-              "ViewState": "AgIAAEMAAAAAAAAAAAApwFAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAKEBAAAAAAAAAAAAALwBAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-24T10:02:44.154Z",
               "EditorCaption": ""
