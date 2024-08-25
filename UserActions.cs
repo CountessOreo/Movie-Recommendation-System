@@ -408,31 +408,6 @@ namespace Project284
         }
         #endregion
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="results"></param>
-        /// <returns></returns>
-        public Menus.MenuHandlerDelegate DisplaySearchResults(List<DatabaseRecord> results)
-        {
-            if (results.Count > 0)
-            {
-                Console.WriteLine("SEARCH RESULTS");
-                Console.WriteLine("================");
-
-                foreach (var show in results)
-                {
-                    Console.WriteLine($"{show.TitleType} {show.PrimaryTitle} ({show.StartYear}) - Genres: {string.Join(", ", show.Genres)}");
-                }
-            }
-            else
-            {
-                Console.WriteLine("No shows found matching the criteria.");
-            }
-            Console.WriteLine("Press any key to go back...");
-            Console.ReadKey();
-            return Menus.MainMenu;
-        }
         public Menus.MenuHandlerDelegate RateShow()
         {
             try
