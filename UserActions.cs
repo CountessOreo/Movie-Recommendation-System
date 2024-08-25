@@ -759,10 +759,10 @@ namespace Project284
             return password;
         }
 
-        internal Menus.MenuHandlerDelegate SearchShows()
+        /*internal Menus.MenuHandlerDelegate SearchShows()
         {
             throw new NotImplementedException();
-        }
+        }*/
         #endregion
     }
 }

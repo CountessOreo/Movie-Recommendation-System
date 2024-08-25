@@ -114,7 +114,7 @@ namespace Project284
                 case 2:
                     return ProfileMenu;
                 case 3:
-                    return userActions.SearchShows;
+                    return userActions.SearchShows();
                 case 4:
                     return userActions.RateShow;
                 case 5:
