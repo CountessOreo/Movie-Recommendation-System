@@ -40,7 +40,7 @@ namespace Project284
         {
             Console.Clear();
             Console.WriteLine("SIGN UP");
-            Console.WriteLine("==========");
+            Console.WriteLine("==========\n");
 
             // Validates user credentials
             string username = SignupGetValidUsername();
@@ -73,7 +73,9 @@ namespace Project284
                 foreach (string genre in genres)
                 {
                     // Checks if the user input genres match genres in the database (case-insensitive)
-                    bool isValid = validGenres.Contains(genre, StringComparer.OrdinalIgnoreCase);
+                    string lowerGenre = genre.ToLower();
+                    List<string> lowerValidGenres = validGenres.Select(g => g.ToLower()).ToList();
+                    bool isValid = lowerValidGenres.Contains(lowerGenre);
 
                     if (!isValid)
                     {
@@ -83,7 +85,7 @@ namespace Project284
 
                 if (invalidGenres.Any())
                 {
-                    Console.WriteLine($"The following genres are not valid: {string.Join(", ", invalidGenres)}");
+                    Console.WriteLine($"\nThe following genres are not valid: {string.Join(", ", invalidGenres)}");
                     Console.WriteLine("Here are the available genres:");
                     Console.WriteLine(string.Join(", ", validGenres));
                 }
@@ -100,8 +102,13 @@ namespace Project284
 
             Users.Add(newUser);
             LoggedInUser = newUser;
+
             //event
-            OnSignUpSuccess?.Invoke("You've successfully created an account.");
+            string successMessage = $"\nYou've successfully created an account {LoggedInUser.Username}.";
+            if (OnSignUpSuccess != null)
+            {
+                OnSignUpSuccess.Invoke(successMessage);
+            }
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
@@ -116,7 +123,7 @@ namespace Project284
         {
             Console.Clear();
             Console.WriteLine("LOGIN");
-            Console.WriteLine("========");
+            Console.WriteLine("========\n");
 
             // Validates user credentials
             string username = LoginGetValidUsername();
@@ -127,22 +134,20 @@ namespace Project284
                 if (user.Username == username && user.Password == password)
                 {
                     LoggedInUser = user;
-                    Console.WriteLine($"Login successful! Welcome back {LoggedInUser.Username}. Press any key to continue...");
+                    Console.WriteLine($"\nLogin successful! Welcome back {LoggedInUser.Username}. Press any key to continue...");
                     Console.ReadKey();
                     return Menus.MainMenu;
                 }
             }
 
-            Console.WriteLine("Login failed. Try again.");
+            Console.WriteLine("\nLogin failed. Try again.");
             Console.ReadKey();
             return Menus.EntranceMenu;
         }
 
         /// <summary>
-        /// Allows user to search for a show in a database based on criteria
+        /// Enum criteria menu 
         /// </summary>
-        /// <returns>A delegate that points to the main menu handler after a successful login</returns>
-
         #region Enums for SearchShows
         enum CriteriaMenu
         {
@@ -154,6 +159,10 @@ namespace Project284
         }
         #endregion
 
+        // <summary>
+        /// Allows user to search for a show in a database based on criteria
+        /// </summary>
+        /// <returns>A delegate that points to the main menu.</returns>
         public Menus.MenuHandlerDelegate SearchShows(List<DatabaseRecord> shows = null)
         {
             // Initialize variables
@@ -162,6 +171,8 @@ namespace Project284
             bool looping = true;
 
             Console.Clear();
+            Console.WriteLine("SEARCH");
+            Console.WriteLine("=========\n");
             Console.WriteLine("What criteria do you want to base your search on:");
 
             // Display search criteria options
@@ -380,7 +391,10 @@ namespace Project284
             }
         }
 
-        // Display the selected shows in the console
+        /// <summary>
+        /// Displays the shows that meet the criteria.
+        /// </summary>
+        /// <param name="randomShows">List of show records that meet the criteria</param>
         private void DisplayResults(List<DatabaseRecord> randomShows)
         {
             Thread.Sleep(3000);
@@ -394,34 +408,42 @@ namespace Project284
 
         #endregion
 
-
+        /// <summary>
+        /// Users can rate a show and add it to their watch history list.
+        /// </summary>
+        /// <returns>A delegate that points to the main menu.</returns>
         public Menus.MenuHandlerDelegate RateShow()
         {
             try
             {
                 // Clear the console and prompt the user to enter the title of the show they want to rate
                 Console.Clear();
-                Console.WriteLine("Rate a Show\nEnter the title of the show you want to rate:");
+                Console.WriteLine("RATE SHOW");
+                Console.WriteLine("============\n");
+                Console.WriteLine("Enter the title of the show you want to rate:");
                 string title = Console.ReadLine();
 
                 var similarShows = db.FilterByTitle(title);
 
                 if (similarShows.Count == 0)
                 {
-                    Console.WriteLine("No shows found with that title. Press any key to go back...");
+                    Console.WriteLine("\nNo shows found with that title. Press any key to go back...");
                     Console.ReadKey();
                 }
                 else
                 {
-                    Console.WriteLine("Select the show you want to rate:");
+                    Console.WriteLine("\nThe following shows match your criteria:");
                     for (int i = 0; i < similarShows.Count; i++)
                     {
                         var show = similarShows[i];
                         Console.WriteLine($"{i + 1}. {show.PrimaryTitle} ({show.StartYear}) - Genres: {string.Join(", ", show.Genres)}");
                     }
+                    Console.WriteLine("\nSelect the show you want to rate:");
+                    string input = Console.ReadLine();
+                    bool isValidIndex = int.TryParse(input, out int selectedShowIndex);
 
                     // Prompt the user to select a show by its index
-                    if (int.TryParse(Console.ReadLine(), out int selectedShowIndex) && selectedShowIndex > 0 && selectedShowIndex <= similarShows.Count)
+                    if (isValidIndex && selectedShowIndex > 0 && selectedShowIndex <= similarShows.Count)
                     {
                         var selectedShow = similarShows[selectedShowIndex - 1];
                         string rating;
@@ -429,8 +451,8 @@ namespace Project284
                         // Loop until the user provides a valid response ('like' or 'dislike')
                         do
                         {
-                            Console.WriteLine($"You selected: {selectedShow.PrimaryTitle} ({selectedShow.StartYear}) - Genres: {string.Join(", ", selectedShow.Genres)}");
-                            Console.WriteLine("Did you like or dislike this show? (Enter 'like' or 'dislike'):");
+                            Console.WriteLine($"\nYou selected: {selectedShow.PrimaryTitle} ({selectedShow.StartYear}) - Genres: {string.Join(", ", selectedShow.Genres)}");
+                            Console.WriteLine("\nDid you like or dislike this show? (Enter 'like' or 'dislike'):");
                             rating = Console.ReadLine().Trim().ToLower();
                         } while (rating != "like" && rating != "dislike");
 
@@ -451,24 +473,28 @@ namespace Project284
                                 }
                             }
                         }
-                        Console.WriteLine("Rating recorded and preferences updated. Press any key to continue...");
+                        Console.WriteLine("\nYour rating has been logged and changes to your genre preferences have been made.");
+                        Console.WriteLine("Press any key to continue...");
                         Console.ReadLine();
                     }
                     else
                     {
-                        Console.WriteLine("Invalid selection. Press any key to go back...");
+                        Console.WriteLine("\nInvalid selection. Press any key to go back...");
                         Console.ReadKey();
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred while rating the show: {ex.Message}");
+                Console.WriteLine($"\nAn error occurred while rating the show: {ex.Message}");
             }
             return Menus.MainMenu;
         }
 
-
+        /// <summary>
+        /// Displays user profile credentials.
+        /// </summary>
+        /// <returns>A delegate that points to the main menu.</returns>
         public Menus.MenuHandlerDelegate DisplayDetails()
         {
             if (LoggedInUser == null)
@@ -480,7 +506,7 @@ namespace Project284
 
             Console.Clear();
             Console.WriteLine("USER DETAILS");
-            Console.WriteLine("==============");
+            Console.WriteLine("==============\n");
             Console.WriteLine($"Username: {LoggedInUser.Username}");
             Console.WriteLine($"Email: {LoggedInUser.Email}");
 
@@ -497,10 +523,15 @@ namespace Project284
             return Menus.ProfileMenu;
         }
 
+        /// <summary>
+        /// Displays a users rated shows.
+        /// </summary>
+        /// <returns>A delegate that points to the main menu.</returns>
         public Menus.MenuHandlerDelegate ViewWatchHistory()
         {
             Console.Clear();
-            Console.WriteLine("Watch History:");
+            Console.WriteLine("WATCH HISTORY:");
+            Console.WriteLine("================\n");
 
             foreach (var record in LoggedInUser.WatchHistory)
             {
@@ -511,10 +542,15 @@ namespace Project284
             return Menus.ProfileMenu;
         }
 
+        /// <summary>
+        /// Allows a user to change their genre preferences.
+        /// </summary>
+        /// <returns>A delegate that points to the main menu.</returns>
         public Menus.MenuHandlerDelegate ChangeGenrePreferences()
         {
             Console.Clear();
-            Console.WriteLine("Change Genre Preferences");
+            Console.WriteLine("CHANGE GENRE PREFERENCE");
+            Console.WriteLine("==========================\n");
             Console.WriteLine("Enter your new favourite genres (e.g., Action, Comedy, Drama):");
 
             // Read the user's input and split it into a list of genres
@@ -535,7 +571,10 @@ namespace Project284
             return Menus.ProfileMenu;
         }
 
-
+        /// <summary>
+        /// Recommends shows based on a users genre preference rankings.
+        /// </summary>
+        /// <returns>A delegate that points to the main menu.</returns>
         public Menus.MenuHandlerDelegate RecommendShows()
         {
             if (LoggedInUser == null || LoggedInUser.PreferredGenres == null)
@@ -545,10 +584,10 @@ namespace Project284
                 return Menus.MainMenu;
             }
 
-            var sortedGenres = LoggedInUser.PreferredGenres
-                .OrderBy(gr => gr.Value)
-                .Select(gr => gr.Key)
-                .ToList();
+            var preferredGenres = LoggedInUser.PreferredGenres;
+            var orderedGenres = preferredGenres.OrderBy(gr => gr.Value);
+            var genreNames = orderedGenres.Select(gr => gr.Key);
+            var sortedGenres = genreNames.ToList();
 
             Thread thr = new Thread(() => PrintResults(sortedGenres));
             Stopwatch sw = new Stopwatch();
@@ -576,6 +615,10 @@ namespace Project284
 
         #region Recommended Show Thread
 
+        /// <summary>
+        /// Displays results of the searched criteria.
+        /// </summary>
+        /// <param name="sortedGenres">Genres sorted by ranking.</param>
         public void PrintResults(List<string> sortedGenres)
         {
             Thread.Sleep(2000);
@@ -598,33 +641,14 @@ namespace Project284
                 Console.WriteLine();
             }
         }
-
         #endregion
-
         #endregion 
 
-
-        #region Menu validation methods
-        public string GetValidOption()
-        {
-            Console.WriteLine("1. Sign Up");
-            Console.WriteLine("2. Login");
-            Console.WriteLine("3. Exit");
-
-            string option = Console.ReadLine();
-
-            while (option != "1" && option != "2" && option != "3")
-            {
-                Console.WriteLine("Invalid option. Choose an option displayed above.");
-                option = Console.ReadLine();
-            }
-
-            return option;
-        }
-        #endregion
-
-
         #region Signup validation methods
+        /// <summary>
+        /// Validates username.
+        /// </summary>
+        /// <returns>Username</returns>
         public string SignupGetValidUsername()
         {
             string username;
@@ -648,6 +672,10 @@ namespace Project284
             }
             return username;
         }
+        /// <summary>
+        /// Validates user email.
+        /// </summary>
+        /// <returns>Email</returns>
         public string SignupGetValidEmail()
         {
             string email;
@@ -677,6 +705,11 @@ namespace Project284
             }
             return email;
         }
+
+        /// <summary>
+        /// Validates user password.
+        /// </summary>
+        /// <returns>Password</returns>
         public string SignupGetValidPassword()
         {
             string password;
@@ -710,6 +743,10 @@ namespace Project284
 
 
         #region Login validation methods
+        /// <summary>
+        /// Validates username against user dictionary.
+        /// </summary>
+        /// <returns>Username</returns>
         public string LoginGetValidUsername()
         {
             string username;
@@ -729,6 +766,10 @@ namespace Project284
             }
             return username;
         }
+        /// <summary>
+        /// Validates user password against user dictionary.
+        /// </summary>
+        /// <returns>Password</returns>
         public string LoginGetValidPassword()
         {
             string password;
@@ -758,11 +799,6 @@ namespace Project284
             }
             return password;
         }
-
-        /*internal Menus.MenuHandlerDelegate SearchShows()
-        {
-            throw new NotImplementedException();
-        }*/
         #endregion
     }
 }
