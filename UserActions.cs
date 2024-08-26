@@ -407,7 +407,6 @@ namespace Project284
         {
             try
             {
-                // Clear the console and prompt the user to enter the title of the show they want to rate
                 Console.Clear();
                 Console.WriteLine("RATE SHOW");
                 Console.WriteLine("============\n");
@@ -433,13 +432,11 @@ namespace Project284
                     string input = Console.ReadLine();
                     bool isValidIndex = int.TryParse(input, out int selectedShowIndex);
 
-                    // Prompt the user to select a show by its index
                     if (isValidIndex && selectedShowIndex > 0 && selectedShowIndex <= similarShows.Count)
                     {
                         var selectedShow = similarShows[selectedShowIndex - 1];
                         string rating;
 
-                        // Loop until the user provides a valid response ('like' or 'dislike')
                         do
                         {
                             Console.WriteLine($"\nYou selected: {selectedShow.PrimaryTitle} ({selectedShow.StartYear}) - Genres: {string.Join(", ", selectedShow.Genres)}");
@@ -447,24 +444,25 @@ namespace Project284
                             rating = Console.ReadLine().Trim().ToLower();
                         } while (rating != "like" && rating != "dislike");
 
-                        // Determine the adjustment value based on the user's rating
                         int adjustment = (rating == "like") ? 1 : -1;
 
-                        // Adjust the weight of each genre in the user's preferences
                         foreach (var genre in selectedShow.Genres)
                         {
                             if (LoggedInUser.PreferredGenres.ContainsKey(genre))
                             {
                                 LoggedInUser.PreferredGenres[genre] += adjustment;
 
-                                // Ensure that the genre weight does not go below 0
                                 if (LoggedInUser.PreferredGenres[genre] < 0)
                                 {
                                     LoggedInUser.PreferredGenres[genre] = 0;
                                 }
                             }
                         }
-                        Console.WriteLine("\nYour rating has been logged and changes to your genre preferences have been made.");
+
+                        // Add the rated show to the watch history
+                        LoggedInUser.WatchHistory.Add(selectedShow);
+
+                        Console.WriteLine("\nYour rating has been logged and the show has been added to your watch history.");
                         Console.WriteLine("Press any key to continue...");
                         Console.ReadLine();
                     }
@@ -524,10 +522,18 @@ namespace Project284
             Console.WriteLine("WATCH HISTORY:");
             Console.WriteLine("================\n");
 
-            foreach (var record in LoggedInUser.WatchHistory)
+            if (LoggedInUser.WatchHistory.Count == 0)
             {
-                Console.WriteLine($"{record.PrimaryTitle} ({record.StartYear}) - Genres: {string.Join(", ", record.Genres)}");
+                Console.WriteLine("No shows have been added to your watch history.");
             }
+            else
+            {
+                foreach (var record in LoggedInUser.WatchHistory)
+                {
+                    Console.WriteLine($"{record.PrimaryTitle} ({record.StartYear}) - Genres: {string.Join(", ", record.Genres)}");
+                }
+            }
+
             Console.WriteLine("Press any key to go back...");
             Console.ReadKey();
             return Menus.ProfileMenu;

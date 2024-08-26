@@ -8,24 +8,19 @@
     "net8.0": []
   },
   "packageFolders": {
-    "C:\\Users\\joube\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\lzr51\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\joube\\OneDrive\\Desktop\\GitHub\\LatestPRG281\\Project284.csproj",
+      "projectUniqueName": "C:\\Users\\lzr51\\Documents\\GitHub\\LatestPRG281\\Project284.csproj",
       "projectName": "Project284",
-      "projectPath": "C:\\Users\\joube\\OneDrive\\Desktop\\GitHub\\LatestPRG281\\Project284.csproj",
-      "packagesPath": "C:\\Users\\joube\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\joube\\OneDrive\\Desktop\\GitHub\\LatestPRG281\\obj\\",
+      "projectPath": "C:\\Users\\lzr51\\Documents\\GitHub\\LatestPRG281\\Project284.csproj",
+      "packagesPath": "C:\\Users\\lzr51\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\lzr51\\Documents\\GitHub\\LatestPRG281\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\joube\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\lzr51\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -33,7 +28,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
