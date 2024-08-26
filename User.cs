@@ -41,6 +41,7 @@ namespace Watt_2_Watch
         public void UpdateGenrePreferences(Dictionary<string, int> newPreferences)
         {
             PreferredGenres = newPreferences;
+            
         }
         #endregion
 

@@ -42,7 +42,6 @@ namespace Project284
             Console.WriteLine("SIGN UP");
             Console.WriteLine("==========\n");
 
-            // Validates user credentials
             string username = SignupGetValidUsername();
             string password = SignupGetValidPassword();
             string email = SignupGetValidEmail();
@@ -54,32 +53,34 @@ namespace Project284
                 Email = email
             };
 
-            // Retrieves all possible genres from the database
             List<string> validGenres = db.GetValidGenres();
 
             string[] genres;
             List<string> invalidGenres;
+            HashSet<string> genreSet;
 
             do
             {
                 Console.WriteLine("Enter your favourite genres (e.g., Action, Comedy, Drama):");
                 string inputGenres = Console.ReadLine();
-
-                // Splits the users inputs at a comma and removes excess spacing
                 genres = inputGenres.Split(',').Select(g => g.Trim()).ToArray();
 
                 invalidGenres = new List<string>();
+                genreSet = new HashSet<string>();
 
                 foreach (string genre in genres)
                 {
-                    // Checks if the user input genres match genres in the database (case-insensitive)
-                    string lowerGenre = genre.ToLower();
-                    List<string> lowerValidGenres = validGenres.Select(g => g.ToLower()).ToList();
-                    bool isValid = lowerValidGenres.Contains(lowerGenre);
+       
+                    string capitalizedGenre = char.ToUpper(genre[0]) + genre.Substring(1).ToLower();
+                    bool isValid = validGenres.Contains(capitalizedGenre);
 
                     if (!isValid)
                     {
                         invalidGenres.Add(genre);
+                    }
+                    else if (!genreSet.Add(capitalizedGenre))
+                    {
+                        Console.WriteLine($"Duplicate genre detected: {capitalizedGenre}");
                     }
                 }
 
@@ -87,28 +88,18 @@ namespace Project284
                 {
                     Console.WriteLine($"\nThe following genres are not valid: {string.Join(", ", invalidGenres)}");
                     Console.WriteLine("Here are the available genres:");
+                    Console.WriteLine("");
                     Console.WriteLine(string.Join(", ", validGenres));
                 }
-            } while (invalidGenres.Any());
-
-            // Create a dictionary with preferred genres
-            var preferredGenres = new Dictionary<string, int>();
-            foreach (string genre in genres)
-            {
-                preferredGenres[genre] = 1;
-            }
+            } while (invalidGenres.Any() || genreSet.Count < genres.Length);
+            var preferredGenres = genreSet.ToDictionary(g => g, g => 1);
 
             newUser.UpdateGenrePreferences(preferredGenres);
 
             Users.Add(newUser);
             LoggedInUser = newUser;
-
-            //event
             string successMessage = $"\nYou've successfully created an account {LoggedInUser.Username}.";
-            if (OnSignUpSuccess != null)
-            {
-                OnSignUpSuccess.Invoke(successMessage);
-            }
+            OnSignUpSuccess?.Invoke(successMessage);
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
