@@ -559,16 +559,46 @@ namespace Project284
             Console.WriteLine("==========================\n");
             Console.WriteLine("Enter your new favourite genres (e.g., Action, Comedy, Drama):");
 
-            // Read the user's input and split it into a list of genres
-            string[] genres = Console.ReadLine().Split(',');
-            var newPreferences = new Dictionary<string, int>();
+            List<string> validGenres = db.GetValidGenres();
+            string[] genres;
+            List<string> invalidGenres;
+            HashSet<string> genreSet;
 
-            // Add each genre to the new preferences dictionary with an initial weight of 1
-            foreach (string genre in genres)
+            do
             {
-                newPreferences[genre.Trim()] = 1;
-            }
+                // Read the user's input and split it into a list of genres
+                string inputGenres = Console.ReadLine();
+                genres = inputGenres.Split(',').Select(g => g.Trim()).ToArray();
 
+                invalidGenres = new List<string>();
+                genreSet = new HashSet<string>();
+
+                foreach (string genre in genres)
+                {
+                    // Capitalize the first letter and convert the rest to lowercase
+                    string capitalizedGenre = char.ToUpper(genre[0]) + genre.Substring(1).ToLower();
+                    bool isValid = validGenres.Contains(capitalizedGenre);
+
+                    if (!isValid)
+                    {
+                        invalidGenres.Add(genre);
+                    }
+                    else if (!genreSet.Add(capitalizedGenre))
+                    {
+                        Console.WriteLine($"Duplicate genre detected: {capitalizedGenre}");
+                    }
+                }
+
+                if (invalidGenres.Any())
+                {
+                    Console.WriteLine($"\nThe following genres are not valid: {string.Join(", ", invalidGenres)}");
+                    Console.WriteLine("Here are the available genres:");
+                    Console.WriteLine("");
+                    Console.WriteLine(string.Join(", ", validGenres));
+                }
+            } while (invalidGenres.Any() || genreSet.Count < genres.Length);
+
+            var newPreferences = genreSet.ToDictionary(g => g, g => 1);
             LoggedInUser.UpdateGenrePreferences(newPreferences);
 
             Console.WriteLine("Preferences updated! Press any key to go back...");
@@ -746,7 +776,6 @@ namespace Project284
             return password;
         }
         #endregion
-
 
         #region Login validation methods
         /// <summary>
