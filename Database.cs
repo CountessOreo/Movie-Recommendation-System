@@ -104,13 +104,12 @@ namespace Watt_2_Watch
         /// Filters the collection of records to include only those with specified title types.
         /// </summary>
         /// <returns>An IEnumerable of DatabaseRecord where each record's TitleType is one of the following: "tvSeries", "movie", "short", "tvMiniSeries", or "tvSpecial".</returns>
-        private IEnumerable<DatabaseRecord> FilterByType(IEnumerable<DatabaseRecord> records)
+        private List<DatabaseRecord> FilterByType(List<DatabaseRecord> records)
         {
             var filteredRecords = new List<DatabaseRecord>();
 
             foreach (var rec in records)
             {
-
                 if (rec.TitleType == "tvSeries" || rec.TitleType == "movie" || rec.TitleType == "short" || rec.TitleType == "tvMiniSeries" || rec.TitleType == "tvSpecial")
                 {
                     filteredRecords.Add(rec);
@@ -123,9 +122,9 @@ namespace Watt_2_Watch
         #region Interface Methods
         public List<DatabaseRecord> FilterByYearRange(int startYear, int endYear)
         {
-            IEnumerable<DatabaseRecord> filteredByType = FilterByType(Records);
+            List<DatabaseRecord> filteredByType = FilterByType(Records);
 
-            List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
+            var filteredRecords = new List<DatabaseRecord>();
 
             foreach (var rec in filteredByType)
             {
@@ -139,7 +138,7 @@ namespace Watt_2_Watch
 
         public List<DatabaseRecord> FilterByYearRange(List<DatabaseRecord> recordList, int startYear, int endYear)
         {
-            IEnumerable<DatabaseRecord> filteredByType = FilterByType(recordList);
+            List<DatabaseRecord> filteredByType = FilterByType(recordList);
 
             List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
 
@@ -155,7 +154,7 @@ namespace Watt_2_Watch
 
         public List<DatabaseRecord> FilterByGenre(List<string> genres)
         {
-            IEnumerable<DatabaseRecord> filteredByType = FilterByType(Records);
+            List<DatabaseRecord> filteredByType = FilterByType(Records);
 
             List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
 
@@ -184,7 +183,7 @@ namespace Watt_2_Watch
 
         public List<DatabaseRecord> FilterByGenre(List<DatabaseRecord> recordList, List<string> genres)
         {
-            IEnumerable<DatabaseRecord> filteredByType = FilterByType(recordList);
+            List<DatabaseRecord> filteredByType = FilterByType(recordList);
 
             List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
 
@@ -215,7 +214,7 @@ namespace Watt_2_Watch
 
         public List<DatabaseRecord> FilterByTitle(string title)
         {
-            IEnumerable<DatabaseRecord> filteredByType = FilterByType(Records);
+            List<DatabaseRecord> filteredByType = FilterByType(Records);
 
             List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
 
@@ -231,7 +230,7 @@ namespace Watt_2_Watch
 
         public List<DatabaseRecord> FilterByTitle(List<DatabaseRecord> recordList, string title)
         {
-            IEnumerable<DatabaseRecord> filteredByType = FilterByType(recordList);
+            List<DatabaseRecord> filteredByType = FilterByType(recordList);
 
             List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
 
@@ -247,7 +246,7 @@ namespace Watt_2_Watch
 
         public List<DatabaseRecord> FilterByDuration(int minDuration, int maxDuration)
         {
-            IEnumerable<DatabaseRecord> filteredByType = FilterByType(Records);
+            List<DatabaseRecord> filteredByType = FilterByType(Records);
 
             List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
 
@@ -263,7 +262,7 @@ namespace Watt_2_Watch
 
         public List<DatabaseRecord> FilterByDuration(List<DatabaseRecord> recordList, int minDuration, int maxDuration)
         {
-            IEnumerable<DatabaseRecord> filteredByType = FilterByType(recordList);
+            List<DatabaseRecord> filteredByType = FilterByType(recordList);
 
             List<DatabaseRecord> filteredRecords = new List<DatabaseRecord>();
 
