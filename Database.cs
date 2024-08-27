@@ -74,7 +74,7 @@ namespace Watt_2_Watch
         }
         #endregion
 
-        #region Classes and records
+        #region Records
         /// <summary>
         /// Database record definition.
         /// </summary>
@@ -103,7 +103,7 @@ namespace Watt_2_Watch
         /// <summary>
         /// Filters the collection of records to include only those with specified title types.
         /// </summary>
-        /// <returns>An IEnumerable of DatabaseRecord where each record's TitleType is one of the following: "tvSeries", "movie", "short", "tvMiniSeries", or "tvSpecial".</returns>
+        /// <returns>A list of DatabaseRecord where each record's TitleType is one of the following: "tvSeries", "movie", "short", "tvMiniSeries", or "tvSpecial".</returns>
         private List<DatabaseRecord> FilterByType(List<DatabaseRecord> records)
         {
             var filteredRecords = new List<DatabaseRecord>();
