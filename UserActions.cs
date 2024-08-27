@@ -177,7 +177,16 @@ namespace Project284
             int critOption = Menus.GetValidInput(1, 5);
 
             // Initialize the results list with the provided list or an empty one
-            List<DatabaseRecord> results = shows ?? new List<DatabaseRecord>();
+            List<DatabaseRecord> results;
+
+            if (shows != null)
+            {
+                results = shows;
+            }
+            else
+            {
+                results = new List<DatabaseRecord>();
+            }
 
             // Handle different search criteria
             switch ((CriteriaMenu)critOption)
