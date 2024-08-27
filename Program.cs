@@ -7,7 +7,6 @@ namespace Project284
 {
     internal class Program
     {
-        // Make this public or internal so it can be accessed by other classes
         public static UserActions userActions = new UserActions();
 
         static void Main(string[] args)
