@@ -422,8 +422,10 @@ namespace Project284
                 Console.WriteLine("Enter the title of the show you want to rate:");
                 string title = Console.ReadLine();
 
+                // Search for shows matching the entered title in the database
                 var similarShows = db.FilterByTitle(title);
 
+                // If no shows are found, notify the user and return to the previous menu
                 if (similarShows.Count == 0)
                 {
                     Console.WriteLine("\nNo shows found with that title. Press any key to go back...");
@@ -441,11 +443,13 @@ namespace Project284
                     string input = Console.ReadLine();
                     bool isValidIndex = int.TryParse(input, out int selectedShowIndex);
 
+                    // If the user's input is valid, proceed with rating the selected show
                     if (isValidIndex && selectedShowIndex > 0 && selectedShowIndex <= similarShows.Count)
                     {
                         var selectedShow = similarShows[selectedShowIndex - 1];
                         string rating;
 
+                        // Prompt the user to rate the selected show, allowing only "like" or "dislike"
                         do
                         {
                             Console.WriteLine($"\nYou selected: {selectedShow.PrimaryTitle} ({selectedShow.StartYear}) - Genres: {string.Join(", ", selectedShow.Genres)}");
@@ -453,30 +457,36 @@ namespace Project284
                             rating = Console.ReadLine().Trim().ToLower();
                         } while (rating != "like" && rating != "dislike");
 
+                        // Determine the adjustment value based on the user's rating
                         int adjustment = (rating == "like") ? 1 : -1;
 
+                        // Adjust the user's preference weight for each genre in the selected show
                         foreach (var genre in selectedShow.Genres)
                         {
                             if (LoggedInUser.PreferredGenres.ContainsKey(genre))
                             {
+                                // Update the genre's weight in preferences if it already exists
                                 LoggedInUser.PreferredGenres[genre] += adjustment;
-
-                                if (LoggedInUser.PreferredGenres[genre] < 0)
-                                {
-                                    LoggedInUser.PreferredGenres[genre] = 0;
-                                }
+                            }
+                            else
+                            {
+                                // Add the genre to preferences if it doesn't already exist
+                                // The weight is set to the adjustment value (positive for "like", 0 for "dislike")
+                                LoggedInUser.PreferredGenres[genre] = adjustment > 0 ? adjustment : 0;
                             }
                         }
 
-                        // Add the rated show to the watch history
+                        // Add the selected show to the user's watch history after rating
                         LoggedInUser.WatchHistory.Add(selectedShow);
 
+                        // Inform the user that the rating has been logged and the show added to the watch history
                         Console.WriteLine("\nYour rating has been logged and the show has been added to your watch history.");
                         Console.WriteLine("Press any key to continue...");
                         Console.ReadLine();
                     }
                     else
                     {
+                        // If the user's selection is invalid, notify them and return to the previous menu
                         Console.WriteLine("\nInvalid selection. Press any key to go back...");
                         Console.ReadKey();
                     }
@@ -484,10 +494,12 @@ namespace Project284
             }
             catch (Exception ex)
             {
+                // Handle any exceptions that occur during the rating process
                 Console.WriteLine($"\nAn error occurred while rating the show: {ex.Message}");
             }
             return Menus.MainMenu;
         }
+
 
         /// <summary>
         /// Displays user profile credentials.
